@@ -194,7 +194,7 @@ export default function MobileMenu({
                 if (vinQuery.trim().length > 0) setVinDropdownOpen(true);
               }}
               autoComplete="off"
-              placeholder={t('searchByCarPlaceholder') || t('searchByVinPlaceholder') || 'Search e.g. Audi'}
+              placeholder={t('searchByCarPlaceholder') || t('searchByVinPlaceholder') || 'Search a car'}
               data-testid="mobile-menu-search"
               className="w-full bg-transparent border border-[#D8D0C6] rounded text-[#17202A] focus:outline-none focus:border-[#162E51]"
               style={{
