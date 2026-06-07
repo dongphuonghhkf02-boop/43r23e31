@@ -7835,7 +7835,7 @@ const translations = {
     mobileMenuOpen: 'Открыть меню',
     mobileMenuClose: 'Закрыть меню',
     contactUs: 'СВЯЗАТЬСЯ С НАМИ',
-    searchByVinPlaceholder: 'Поиск по VIN или номеру лота',
+    searchByVinPlaceholder: 'Поиск по VIN',
     crumbHome: 'ГЛАВНАЯ',
     crumbCatalog: 'КАТАЛОГ',
     crumbCalculator: 'КАЛЬКУЛЯТОР',

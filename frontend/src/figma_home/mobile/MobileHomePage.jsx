@@ -167,9 +167,9 @@ const I18N = {
     calculateCarYourself: 'Calculate a car yourself',
     withPriceGuarantee: 'with a price guarantee',
     fromUsaKorea: 'From Europe',
-    searchByVin: 'Search e.g. Audi',
+    searchByVin: 'What car are you looking for?',
     calculate: 'Calculate',
-    allCatalogPlus: 'All catalog +',
+    allCatalogPlus: 'More options +',
     // Bracketed bilingual subtitles
     ourClientsReceive: 'Our clients receive',
     theBestService: 'the best service',
@@ -262,9 +262,8 @@ const I18N = {
     calculateCarYourself: 'Рассчитайте автомобиль самостоятельно',
     withPriceGuarantee: 'с гарантированной ценой',
     fromUsaKorea: 'Из Европы',
-    searchByVin: 'Например, Audi A6',
+    searchByVin: 'Какой автомобиль вы ищете?',
     calculate: 'Рассчитать',
-    allCatalogPlus: 'Весь каталог +',
     // Bracketed bilingual subtitles
     ourClientsReceive: 'Наши клиенты получают',
     theBestService: 'лучший сервис',
@@ -1397,7 +1396,6 @@ export default function MobileHomePage() {
           }}
         >
           {[
-            { label: t.navCatalog,    href: '/catalog' },
             { label: t.navCalculator, href: '/calculator' },
             { label: t.navAboutUs,    href: '/about' },
             { label: t.navBlog,       href: '/blog' },
@@ -3192,7 +3190,7 @@ function MobileCalculateCar({ t }) {
               value={vin}
               onChange={(e) => setVin(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && submit(e)}
-              placeholder={t?.searchByVin || "Search by VIN or lot number"}
+              placeholder={t?.searchByVin || "Search a car"}
               style={{
                 flex: 1,
                 background: 'transparent',
