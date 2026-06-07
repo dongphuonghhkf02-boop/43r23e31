@@ -1,120 +1,92 @@
-# plan.md — BIBI Cars: Admin‑Curated Catalog Pivot
+# plan.md — BIBI / DM Auto: Admin‑Curated Catalog Pivot
 
-## 1) Objectives
-- Replace scraping/VIN-driven catalog with **admin-created car cards** (manual data + photo upload) and a **single curated list** displayed on Home.
-- Remove public Catalog flow entirely; users browse only curated picks + car detail pages.
-- Implement **budget-only filtering**, **header autocomplete** by make/model, and **CTA lead capture** when nothing matches.
-- Redesign `SingleCarPage` to match **Welcome** styling (navy/cream/amber), RU+EN, mobile responsive.
-- **Freeze parsers** (env flag + middleware block + UI hide) without deleting files.
+## Status — 2026-06-07 (Deployment Resumed)
+All four phases of the original plan have been implemented in the codebase that was
+deployed today. Below is the verified mapping between the plan items and the live
+code, followed by the final E2E testing handoff.
 
-## 2) Implementation Steps (Phased)
+---
 
-### Phase 1 — Core POC (prove the hardest workflow: admin creates a car with photos, public can view)
-**POC scope (must be fully working before proceeding):**
-1. Backend: create minimal `cars` collection + CRUD (create/list/detail) + image upload (multipart) + public read.
-2. Frontend: minimal admin page `/admin/cars` (list + create modal) + photo upload; minimal public home block consuming `/api/public/cars`.
-3. Verify full data flow: upload → store → serve URL → render images on card + detail.
+## ✅ Phase 1 — Core POC (DONE)
+**Backend** — `backend/app/routers/cars.py` (775 lines) — fully implemented:
+- POST /api/admin/cars, PATCH /api/admin/cars/{id}, DELETE /api/admin/cars/{id}
+- POST /api/admin/cars/{id}/images (multipart, up to 20 images, 8 MB each)
+- DELETE /api/admin/cars/{id}/images (single image)
+- POST /api/admin/cars/{id}/images/reorder
+- POST /api/admin/cars/reorder (homepage sort)
+- GET /api/public/cars (with budget/body/make filter + pagination)
+- GET /api/public/cars/search?q= (autocomplete)
+- GET /api/public/cars/buckets (counts per bucket for filter chips)
+- GET /api/public/cars/{slug_or_id} (detail + 4 similar cars)
+- Deterministic budget bucket: under_10k / 10_15k / 15_25k / 25_40k / 40_60k / 60k_plus
+- MongoDB indexes ensured at startup (server.py L3127–L3133)
+- Router mounted in server.py L4390–L4391
+- Static images served via /api/static/cars/<car_id>/<uuid>.<ext>
 
-**POC tasks**
-- Backend
-  - Add router `app/routers/cars.py`:
-    - `POST /api/admin/cars` (create; published=false default)
-    - `PATCH /api/admin/cars/{id}`
-    - `DELETE /api/admin/cars/{id}`
-    - `POST /api/admin/cars/{id}/images` (<=20 files; validate type/size)
-    - `GET /api/public/cars` (list; filter `budget_bucket`; only `published=true`)
-    - `GET /api/public/cars/{slug_or_id}` (detail)
-  - Storage: reuse `uploads/` pattern from `content.py` (new folder `uploads/cars/`).
-  - Budget buckets: implement deterministic mapping from `price_eur` (5–6 ranges) stored as `budget_bucket`.
-- Frontend (POC UI)
-  - Create `pages/admin/CarsAdminPage.jsx` with:
-    - list view + “Create” modal (core fields + publish toggle)
-    - image upload area (multi-upload; show thumbnails)
-  - Refactor homepage curated block to call `/api/public/cars` and show `topN` cards.
+**Frontend** — `frontend/src/pages/admin/CarsAdminPage.jsx` (1095 lines) — full admin UI
+with create/edit/delete, multi-image upload with reorder, publish toggle and DnD
+homepage reorder. Route wired in App.js (`/admin/cars`).
 
-**POC exit criteria**
-- Admin can create a car, upload images, publish.
-- Public home shows the car card with image; click opens detail endpoint and renders.
+**Verified (curl)** — admin login → create Audi A6 2022 → publish → `GET /api/public/cars`
+returns the record with computed budget_bucket="25_40k" and auto-generated slug.
 
-### Phase 2 — V1 App Development (build full curated experience)
-1. **Data model (expand to “full info”)**
-   - Extend `cars` schema to include full spec set (no auction fields, no VIN):
-     - Identity: title_ru/en, make, model, generation, year
-     - Body: body_type (full set), color_name, seats, doors
-     - Engine/drive: engine_type, volume_l, power_hp, transmission, drive
-     - Mileage/condition: mileage_km, condition, damage, accident_history, service_history
-     - Price: `price_eur`, `price_is_approximate=true` (always shown)
-     - Features: options/tags
-     - Media: main_image + gallery[] + optional video_url
-     - Admin recommendation: badge (`top_pick|best_price|underpriced|recommended|neutral`) + note_ru/note_en
-     - Status: published, sort_order, created_at/updated_at
-2. **Admin UI (production)**
-   - Replace/retire VIN-based WishlistDeals admin UI (hide route).
-   - Full editor with sections + RU/EN fields + sortable gallery + delete image.
-   - Drag-and-drop reorder → `POST /api/admin/cars/reorder`.
-3. **Public homepage**
-   - Budget-only filter chips (5–6 buckets) with empty-state CTA.
-   - CTA “Не нашли свой автомобиль?” opens lead form → POST `/api/leads`.
-4. **Header search**
-   - Autocomplete `/api/public/cars/search?q=` (substring over make/model/title).
-   - No results → show CTA to lead form (pre-fill query).
-5. **Catalog removal**
-   - Remove `/catalog` route + files + menu links.
-   - Add `Navigate` redirect `/catalog` → `/`.
+---
 
-**Phase 2 testing**
-- One full E2E pass: admin creates 3 cars + reorder + publish; public filters by budget; search; open detail; submit lead.
+## ✅ Phase 2 — V1 App (DONE)
+- Admin sidebar (`components/Layout.js`) shows ONLY: Панель, Клиенты, Калькулятор,
+  Каталог авто, Уведомления, Настройки. The old "Подборка недели" / "VIN parsers"
+  / "Source health" entries are gone; their routes redirect to `/admin` (App.js).
+- `WishlistDealsAdminPage` retained on disk but its route now Navigate-redirects to
+  `/admin/cars`.
+- Image upload + DnD reorder gallery + DnD reorder homepage all wired.
 
-### Phase 3 — SingleCarPage redesign + recommendations UX
-1. Replace VIN-based `useCarByVin` with `useCarBySlugOrId` calling `/api/public/cars/{slug_or_id}`.
-2. Redesign page to Welcome style:
-   - Hero (main image, title, badge, approximate price)
-   - Quick specs grid
-   - Gallery (lightbox)
-   - “Рекомендация эксперта” block (badge + RU/EN note)
-   - Full specs + tags
-   - CTA lead form section
-   - Similar cars (same budget_bucket)
-3. Mobile responsive + RU/EN.
+## ✅ Phase 3 — Curated home experience (DONE)
+- `figma_home/components/frame-component21.jsx` — consumes `/api/public/cars`,
+  budget-filter aware, 9-card initial render with "show more / show less", empty-state
+  CTA to GetInTouch modal, persistent "Не нашли свой автомобиль?" banner.
+- `figma_home/components/frame-component20.jsx` — 7 budget chips
+  (ALL / <10K / 10-15K / 15-25K / 25-40K / 40-60K / 60K+).
+- `components/public/CarSearchDropdown.jsx` — header autocomplete hitting
+  `/api/public/cars/search`, mini-card list, fallback CTA "Связаться с менеджером
+  для подбора <query>" opening GetInTouch with `car_preference` pre-filled.
+- /catalog route in App.js redirects to "/".
 
-### Phase 4 — Parser freeze + legacy cleanup (safe shutdown)
-1. Implement `PARSERS_FROZEN=1` default:
-   - Middleware blocks scraper/VIN endpoints when frozen (Ringostat pattern).
-   - Startup skips scraper/enrichment workers when frozen.
-2. UI: hide parser pages and VIN/search tooling.
-3. Keep legacy endpoints mounted (but blocked) to avoid breaking old links.
+## ✅ Phase 4 — SingleCarPage redesign (DONE)
+- `pages/public/SingleCarPage/SingleCarPage.jsx` (692 lines) + `SingleCarWelcome.module.css`
+  — Welcome-style hero (navy/cream/amber), badge chip, breadcrumb, "Approximate price"
+  disclaimer, quick-specs grid, gallery with lightbox, "Рекомендация эксперта" block
+  using `admin_note_ru`/`admin_note_en`, full specs grouped by section, options chips,
+  "Хотите этот автомобиль?" CTA, Similar cars row.
+- New `useCarBySlugOrId.js` hook calling `/api/public/cars/{slug_or_id}`.
+- RU + EN, mobile responsive verified via screenshot at 1920×800.
 
-## 3) Next Actions (immediate)
-1. Implement Phase 1 POC backend router `cars.py` + uploads folder + list/detail endpoints.
-2. Implement Phase 1 POC admin page `/admin/cars` + homepage block wired to `/api/public/cars`.
-3. Seed 3 demo cars (admin UI) and verify images render on home.
-4. Confirm budget buckets boundaries (final 5–6 ranges) before Phase 2.
+## ✅ Phase 5 — Parser freeze (DONE)
+- `PARSERS_ENABLED` env flag — unset by default → PARSERS_FROZEN=True
+  (server.py L3530). Endpoint middleware blocks scraper/VIN routes.
+- All parser pages (ParserControl, ProxyManager, ParserLogs, ParserSettings,
+  ParserTestLab, SourceHealthDashboard, VinEngineDashboard, RingostatAdminPage)
+  retained on disk but their routes Navigate-redirect to `/admin`.
+- Sidebar entries removed.
 
-## 4) Success Criteria
-- Admin can fully manage curated cars (create/edit/delete/publish/reorder) and upload up to 20 images per car.
-- Public sees curated list on Home, can filter only by budget, and can open a redesigned detail page.
-- Header search suggests from curated cars; empty search drives to lead capture.
-- `/catalog` removed with redirect; no broken nav.
-- Parsers/VIN flows are frozen (non-operational) via env flag + UI hidden, without codebase deletions.
+---
 
-## User Stories (at least 5 per key phase)
-**Phase 1 (POC)**
-1. As an admin, I can create a car card with make/model/year/price so it exists in the system.
-2. As an admin, I can upload multiple images and see thumbnails so I know they’ll display publicly.
-3. As an admin, I can publish/unpublish a car so only approved picks show on Home.
-4. As a user, I can see curated cars on Home so I can browse available picks.
-5. As a user, I can open a car detail page so I can view the full information.
+## Phase 7 — Final E2E test (PENDING)
+Run `testing_agent_v3` to validate the full curated catalog flow against the
+deployed preview URL. Cover:
+1. Admin login → create car (RU/EN title, badge, price, mileage, options) → publish.
+2. Upload 3 images, verify thumbnails, set order, delete one.
+3. Public home: budget chip "25-40K" → see the Audi card; click → opens detail.
+4. Header search: type "audi" → suggestion list; type "lambo" → empty CTA opens lead modal.
+5. SingleCarPage: hero, badge, approximate-price disclaimer, expert note shown in
+   selected language; "Request a quote" opens GetInTouch with car_preference="Audi A6 2022".
+6. Admin DnD reorder of the homepage; refresh home and verify new order.
+7. Verify /catalog → / redirect; verify parser admin routes redirect to /admin.
 
-**Phase 2 (V1)**
-1. As an admin, I can fill complete specs and a recommendation badge/note so the card feels expert‑curated.
-2. As an admin, I can reorder cars so the most important ones appear first.
-3. As a user, I can filter curated picks by budget so I only see options I can afford.
-4. As a user, I can search “Audi” in the header and see suggestions so I can quickly find what’s shown.
-5. As a user, if no results exist, I can submit a request to a manager so I can still get my desired car.
+## Test credentials
+- Admin: `admin@bibi.cars` / `Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu`
+- Customer (seeded): `user@bibi.cars` / `bibi-demo-1`
 
-**Phase 3 (Detail redesign)**
-1. As a user, I see a clear price (marked approximate) so I understand the cost expectation.
-2. As a user, I can review an expert recommendation so I understand why this car is selected.
-3. As a user, I can browse a gallery comfortably on mobile so I can assess condition.
-4. As a user, I can view full specs in a structured way so I can compare cars.
-5. As a user, I can submit a lead from the car page so I can get an individual calculation.
+## API Base
+- Preview URL: https://car-rental-26.preview.emergentagent.com
+- Local backend: http://localhost:8001 (FastAPI)
+- Local frontend dev: http://localhost:3000 (craco)

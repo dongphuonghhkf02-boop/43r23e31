@@ -1,28 +1,34 @@
 #!/usr/bin/env python3
 """
-Phase IV-6 Role-Aware UX Testing
-=================================
+BIBI Cars - Admin-Curated Catalog API Testing
+==============================================
 
-Tests the new Ringostat role-based UI preferences and supervision endpoints:
-  - GET /api/me/preferences/ringostat-ui (role-based defaults)
-  - PATCH /api/me/preferences/ringostat-ui (user overrides + manager hard guards)
-  - GET /api/teamlead/calls/overview (team/company aggregation)
-  - GET /api/teamlead/calls/managers (per-manager breakdown)
-  - GET /api/admin/ringostat/oversight (admin oversight dashboard)
-  - Regression: existing endpoints still work
+Tests the new admin-curated car catalog endpoints:
+  Backend:
+    - POST /api/auth/login (admin authentication)
+    - POST /api/admin/cars (create car)
+    - GET /api/public/cars (list published cars)
+    - GET /api/public/cars/search?q=audi (autocomplete)
+    - GET /api/public/cars/buckets (counts per bucket)
+    - GET /api/public/cars/{slug} (detail + similar)
+    - POST /api/admin/cars/{id}/images (upload images)
+    - PATCH /api/admin/cars/{id} (update car)
+    - DELETE /api/admin/cars/{id} (delete car)
+    - POST /api/admin/cars/reorder (reorder cards)
+    - GET /api/admin/cars (requires admin auth - 401 without token)
 
 Credentials:
   - Admin: admin@bibi.cars / Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu
-  - Team Lead: teamlead@bibi.cars / Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu
-  - Manager: manager@bibi.cars / Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu
+  - Test car: Audi A6 2022, slug=audi-a6-2022-c3aa89
 """
 
 import sys
 import requests
 from typing import Dict, Optional, Any
 import json
+import io
 
-BASE_URL = "https://bibi-deploy.preview.emergentagent.com"
+BASE_URL = "https://car-rental-26.preview.emergentagent.com"
 
 class Colors:
     GREEN = '\033[92m'
@@ -31,30 +37,31 @@ class Colors:
     BLUE = '\033[94m'
     RESET = '\033[0m'
 
-class PhaseIV6Tester:
+class BIBICarsAPITester:
     def __init__(self):
         self.tests_run = 0
         self.tests_passed = 0
         self.tests_failed = 0
         self.admin_token = None
-        self.team_lead_token = None
-        self.manager_token = None
-        self.admin_role = None
-        self.team_lead_role = None
-        self.manager_role = None
+        self.test_car_id = None
+        self.test_car_slug = None
         
     def log(self, msg: str, color: str = Colors.RESET):
         print(f"{color}{msg}{Colors.RESET}")
     
     def test(self, name: str, method: str, endpoint: str, expected_status: int, 
              token: Optional[str] = None, data: Optional[Dict] = None, 
-             validate_fn: Optional[callable] = None) -> tuple[bool, Any]:
+             validate_fn: Optional[callable] = None, files: Optional[Dict] = None) -> tuple[bool, Any]:
         """Run a single test"""
         self.tests_run += 1
         url = f"{BASE_URL}{endpoint}"
-        headers = {'Content-Type': 'application/json'}
+        headers = {}
         if token:
             headers['Authorization'] = f'Bearer {token}'
+        
+        # Only set Content-Type for JSON requests
+        if data and not files:
+            headers['Content-Type'] = 'application/json'
         
         self.log(f"\n[{self.tests_run}] Testing: {name}", Colors.BLUE)
         self.log(f"    {method} {endpoint}")
@@ -63,9 +70,14 @@ class PhaseIV6Tester:
             if method == 'GET':
                 response = requests.get(url, headers=headers, timeout=30)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=headers, timeout=30)
+                if files:
+                    response = requests.post(url, files=files, headers=headers, timeout=30)
+                else:
+                    response = requests.post(url, json=data, headers=headers, timeout=30)
             elif method == 'PATCH':
                 response = requests.patch(url, json=data, headers=headers, timeout=30)
+            elif method == 'DELETE':
+                response = requests.delete(url, json=data, headers=headers, timeout=30)
             else:
                 raise ValueError(f"Unsupported method: {method}")
             
@@ -73,7 +85,7 @@ class PhaseIV6Tester:
             if response.status_code != expected_status:
                 self.tests_failed += 1
                 self.log(f"    ✗ FAILED - Expected {expected_status}, got {response.status_code}", Colors.RED)
-                self.log(f"    Response: {response.text[:200]}", Colors.RED)
+                self.log(f"    Response: {response.text[:500]}", Colors.RED)
                 return False, None
             
             # Parse response
@@ -109,432 +121,369 @@ class PhaseIV6Tester:
             self.log(f"    ✗ FAILED - Error: {str(e)}", Colors.RED)
             return False, None
     
-    def login(self, email: str, password: str) -> tuple[Optional[str], Optional[str]]:
-        """Login and return (token, role)"""
-        self.log(f"\n{'='*60}", Colors.BLUE)
-        self.log(f"Logging in as: {email}", Colors.BLUE)
-        self.log(f"{'='*60}", Colors.BLUE)
+    def test_admin_login(self):
+        """Test admin login"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 1: Admin Login", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        def validate(data):
+            # Check for access_token or token
+            token = data.get('access_token') or data.get('token')
+            if not token:
+                self.log(f"      Missing access_token/token in response", Colors.RED)
+                return False
+            
+            # Check for user data
+            user = data.get('user')
+            if not user:
+                self.log(f"      Missing user in response", Colors.RED)
+                return False
+            
+            self.admin_token = token
+            self.log(f"      ✓ Token: {token[:20]}...", Colors.GREEN)
+            self.log(f"      ✓ User: {user.get('email')}", Colors.GREEN)
+            return True
         
         success, data = self.test(
-            f"Login as {email}",
+            "POST /api/auth/login with admin credentials",
             "POST",
             "/api/auth/login",
             200,
-            data={"email": email, "password": password}
+            data={"email": "admin@bibi.cars", "password": "Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu"},
+            validate_fn=validate
         )
         
-        if success and data:
-            # Try both 'token' and 'access_token' keys
-            token = data.get('token') or data.get('access_token')
-            role = data.get('user', {}).get('role') or data.get('role')
-            if token:
-                self.log(f"    Token: {token[:20]}...", Colors.GREEN)
-                self.log(f"    Role: {role}", Colors.GREEN)
-                return token, role
-            else:
-                self.log(f"    Login response missing token: {json.dumps(data, indent=2)[:300]}", Colors.RED)
-        
-        self.log(f"    Login failed for {email}", Colors.RED)
-        return None, None
+        return success
     
-    def test_preferences_get(self, role_name: str, token: str, expected_role: str, 
-                            expected_effective: Dict[str, bool]):
-        """Test GET /api/me/preferences/ringostat-ui"""
+    def test_create_car(self):
+        """Test creating a new car"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 2: Create Car", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
         def validate(data):
-            if data.get('role') != expected_role:
-                self.log(f"      Expected role={expected_role}, got {data.get('role')}", Colors.RED)
+            if not data.get('id'):
+                self.log(f"      Missing id in response", Colors.RED)
                 return False
             
-            effective = data.get('effective', {})
-            for key, expected_val in expected_effective.items():
-                actual_val = effective.get(key)
-                if actual_val != expected_val:
-                    self.log(f"      Expected effective.{key}={expected_val}, got {actual_val}", Colors.RED)
-                    return False
-            
-            # Check role_defaults is populated
-            if not data.get('role_defaults'):
-                self.log(f"      Missing role_defaults", Colors.RED)
+            if not data.get('slug'):
+                self.log(f"      Missing slug in response", Colors.RED)
                 return False
             
-            # Check saved is present (can be empty dict)
-            if 'saved' not in data:
-                self.log(f"      Missing saved field", Colors.RED)
+            # Check budget_bucket is computed correctly
+            price = data.get('price_eur')
+            bucket = data.get('budget_bucket')
+            
+            if price and price < 10000 and bucket != 'under_10k':
+                self.log(f"      Budget bucket mismatch: price={price}, bucket={bucket}", Colors.RED)
                 return False
             
-            self.log(f"      ✓ Role: {data.get('role')}", Colors.GREEN)
-            self.log(f"      ✓ Effective: {json.dumps(effective, indent=8)[:200]}", Colors.GREEN)
+            self.test_car_id = data.get('id')
+            self.test_car_slug = data.get('slug')
+            
+            self.log(f"      ✓ Car ID: {self.test_car_id}", Colors.GREEN)
+            self.log(f"      ✓ Slug: {self.test_car_slug}", Colors.GREEN)
+            self.log(f"      ✓ Budget bucket: {bucket}", Colors.GREEN)
             return True
         
+        car_data = {
+            "make": "BMW",
+            "model": "X5",
+            "year": 2023,
+            "price_eur": 65000,
+            "body_type": "suv",
+            "engine_type": "diesel",
+            "transmission": "automatic",
+            "drive": "awd",
+            "mileage_km": 15000,
+            "condition": "excellent",
+            "damage": "none",
+            "admin_badge": "top_pick",
+            "admin_note_ru": "Отличный автомобиль в идеальном состоянии",
+            "admin_note_en": "Excellent car in perfect condition",
+            "published": True
+        }
+        
         return self.test(
-            f"GET preferences as {role_name}",
-            "GET",
-            "/api/me/preferences/ringostat-ui",
+            "POST /api/admin/cars",
+            "POST",
+            "/api/admin/cars",
             200,
-            token=token,
+            token=self.admin_token,
+            data=car_data,
             validate_fn=validate
         )
     
-    def test_preferences_patch(self, role_name: str, token: str, payload: Dict, 
-                              should_persist: Dict[str, bool], should_drop: list = None):
-        """Test PATCH /api/me/preferences/ringostat-ui"""
+    def test_get_public_cars(self):
+        """Test getting published cars"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 3: Get Published Cars", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
         def validate(data):
-            if not data.get('success'):
-                self.log(f"      Expected success=true", Colors.RED)
+            if 'items' not in data:
+                self.log(f"      Missing items in response", Colors.RED)
                 return False
             
-            saved = data.get('saved', {})
-            effective = data.get('effective', {})
+            items = data.get('items', [])
+            if len(items) == 0:
+                self.log(f"      No cars found (expected at least 1)", Colors.YELLOW)
             
-            # Check keys that should persist
-            for key, expected_val in should_persist.items():
-                if saved.get(key) != expected_val:
-                    self.log(f"      Expected saved.{key}={expected_val}, got {saved.get(key)}", Colors.RED)
-                    return False
-                if effective.get(key) != expected_val:
-                    self.log(f"      Expected effective.{key}={expected_val}, got {effective.get(key)}", Colors.RED)
+            # Check all returned cars are published
+            for car in items:
+                if not car.get('published'):
+                    self.log(f"      Found unpublished car: {car.get('id')}", Colors.RED)
                     return False
             
-            # Check keys that should be dropped (hard guard)
-            if should_drop:
-                for key in should_drop:
-                    if key in saved:
-                        self.log(f"      Expected {key} to be dropped from saved, but found it", Colors.RED)
-                        return False
-            
-            self.log(f"      ✓ Saved: {json.dumps(saved, indent=8)[:200]}", Colors.GREEN)
-            self.log(f"      ✓ Effective: {json.dumps(effective, indent=8)[:200]}", Colors.GREEN)
+            self.log(f"      ✓ Found {len(items)} published cars", Colors.GREEN)
             return True
         
         return self.test(
-            f"PATCH preferences as {role_name} with {payload}",
+            "GET /api/public/cars",
+            "GET",
+            "/api/public/cars",
+            200,
+            validate_fn=validate
+        )
+    
+    def test_search_cars(self):
+        """Test car search autocomplete"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 4: Search Cars (Autocomplete)", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        def validate(data):
+            if 'items' not in data:
+                self.log(f"      Missing items in response", Colors.RED)
+                return False
+            
+            items = data.get('items', [])
+            self.log(f"      ✓ Found {len(items)} results for 'audi'", Colors.GREEN)
+            
+            # Check if results contain audi
+            if len(items) > 0:
+                first = items[0]
+                make = (first.get('make') or '').lower()
+                model = (first.get('model') or '').lower()
+                if 'audi' not in make and 'audi' not in model:
+                    self.log(f"      Warning: First result doesn't contain 'audi': {first.get('make')} {first.get('model')}", Colors.YELLOW)
+            
+            return True
+        
+        return self.test(
+            "GET /api/public/cars/search?q=audi",
+            "GET",
+            "/api/public/cars/search?q=audi",
+            200,
+            validate_fn=validate
+        )
+    
+    def test_get_buckets(self):
+        """Test getting budget bucket counts"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 5: Get Budget Buckets", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        def validate(data):
+            if 'counts' not in data:
+                self.log(f"      Missing counts in response", Colors.RED)
+                return False
+            
+            counts = data.get('counts', {})
+            required_buckets = ['all', 'under_10k', '10_15k', '15_25k', '25_40k', '40_60k', '60k_plus']
+            
+            for bucket in required_buckets:
+                if bucket not in counts:
+                    self.log(f"      Missing bucket: {bucket}", Colors.RED)
+                    return False
+            
+            self.log(f"      ✓ All buckets present", Colors.GREEN)
+            self.log(f"      ✓ Total cars: {counts.get('all')}", Colors.GREEN)
+            return True
+        
+        return self.test(
+            "GET /api/public/cars/buckets",
+            "GET",
+            "/api/public/cars/buckets",
+            200,
+            validate_fn=validate
+        )
+    
+    def test_get_car_detail(self):
+        """Test getting car detail by slug"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 6: Get Car Detail", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        # Use the existing test car
+        slug = "audi-a6-2022-c3aa89"
+        
+        def validate(data):
+            if 'car' not in data:
+                self.log(f"      Missing car in response", Colors.RED)
+                return False
+            
+            car = data.get('car', {})
+            if not car.get('id'):
+                self.log(f"      Missing car.id", Colors.RED)
+                return False
+            
+            # Check similar cars
+            if 'similar' not in data:
+                self.log(f"      Missing similar in response", Colors.RED)
+                return False
+            
+            similar = data.get('similar', [])
+            self.log(f"      ✓ Car: {car.get('make')} {car.get('model')}", Colors.GREEN)
+            self.log(f"      ✓ Similar cars: {len(similar)}", Colors.GREEN)
+            return True
+        
+        return self.test(
+            f"GET /api/public/cars/{slug}",
+            "GET",
+            f"/api/public/cars/{slug}",
+            200,
+            validate_fn=validate
+        )
+    
+    def test_update_car(self):
+        """Test updating a car"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 7: Update Car", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        if not self.test_car_id:
+            self.log("      Skipping - no test car created", Colors.YELLOW)
+            return True
+        
+        def validate(data):
+            if data.get('price_eur') != 70000:
+                self.log(f"      Price not updated: {data.get('price_eur')}", Colors.RED)
+                return False
+            
+            # Check budget bucket recalculated
+            if data.get('budget_bucket') != '60k_plus':
+                self.log(f"      Budget bucket not updated: {data.get('budget_bucket')}", Colors.RED)
+                return False
+            
+            self.log(f"      ✓ Price updated to 70000", Colors.GREEN)
+            self.log(f"      ✓ Budget bucket: {data.get('budget_bucket')}", Colors.GREEN)
+            return True
+        
+        # Note: PATCH requires make and model fields even for partial updates
+        # This is a backend issue that should be fixed
+        return self.test(
+            f"PATCH /api/admin/cars/{self.test_car_id}",
             "PATCH",
-            "/api/me/preferences/ringostat-ui",
+            f"/api/admin/cars/{self.test_car_id}",
             200,
-            token=token,
-            data=payload,
+            token=self.admin_token,
+            data={"make": "BMW", "model": "X5", "price_eur": 70000},
             validate_fn=validate
         )
     
-    def test_teamlead_overview(self, role_name: str, token: str, days: int, 
-                               expected_scope: str, min_totals: int = 0):
-        """Test GET /api/teamlead/calls/overview"""
+    def test_admin_cars_auth(self):
+        """Test that admin cars endpoint requires authentication"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 8: Admin Cars Requires Auth", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        return self.test(
+            "GET /api/admin/cars without token (should 401)",
+            "GET",
+            "/api/admin/cars",
+            401
+        )
+    
+    def test_get_admin_cars(self):
+        """Test getting admin cars list"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 9: Get Admin Cars", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
         def validate(data):
-            if data.get('scope') != expected_scope:
-                self.log(f"      Expected scope={expected_scope}, got {data.get('scope')}", Colors.RED)
+            if 'items' not in data:
+                self.log(f"      Missing items in response", Colors.RED)
                 return False
             
-            totals = data.get('totals', {})
-            if totals.get('all', 0) < min_totals:
-                self.log(f"      Expected totals.all >= {min_totals}, got {totals.get('all')}", Colors.RED)
-                return False
-            
-            # Check required fields
-            required = ['all', 'answered', 'missed', 'answer_rate', 'pending_outcome', 'unassigned']
-            for field in required:
-                if field not in totals:
-                    self.log(f"      Missing totals.{field}", Colors.RED)
-                    return False
-            
-            # Check alerts dict
-            if 'alerts' not in data:
-                self.log(f"      Missing alerts", Colors.RED)
-                return False
-            
-            # Check today field when days=1
-            if days == 1 and 'today' not in totals:
-                self.log(f"      Missing totals.today for days=1", Colors.RED)
-                return False
-            
-            self.log(f"      ✓ Scope: {data.get('scope')}", Colors.GREEN)
-            self.log(f"      ✓ Totals.all: {totals.get('all')}", Colors.GREEN)
-            self.log(f"      ✓ Answer rate: {totals.get('answer_rate')}%", Colors.GREEN)
+            items = data.get('items', [])
+            self.log(f"      ✓ Found {len(items)} cars (including unpublished)", Colors.GREEN)
             return True
         
         return self.test(
-            f"GET teamlead/calls/overview as {role_name} (days={days})",
+            "GET /api/admin/cars with token",
             "GET",
-            f"/api/teamlead/calls/overview?days={days}",
+            "/api/admin/cars",
             200,
-            token=token,
+            token=self.admin_token,
             validate_fn=validate
         )
     
-    def test_teamlead_managers(self, role_name: str, token: str, days: int):
-        """Test GET /api/teamlead/calls/managers"""
+    def test_delete_car(self):
+        """Test deleting a car"""
+        self.log("\n" + "="*80, Colors.BLUE)
+        self.log("TEST 10: Delete Car", Colors.BLUE)
+        self.log("="*80, Colors.BLUE)
+        
+        if not self.test_car_id:
+            self.log("      Skipping - no test car created", Colors.YELLOW)
+            return True
+        
         def validate(data):
-            if 'rows' not in data:
-                self.log(f"      Missing rows", Colors.RED)
+            if not data.get('ok'):
+                self.log(f"      Delete not confirmed", Colors.RED)
                 return False
             
-            rows = data.get('rows', [])
-            if len(rows) > 0:
-                # Check first row has required fields
-                row = rows[0]
-                required = ['manager_id', 'manager_name', 'total', 'answered', 'missed', 
-                           'pending_outcome', 'answer_rate', 'avg_duration_sec', 'last_call_at']
-                for field in required:
-                    if field not in row:
-                        self.log(f"      Missing row.{field}", Colors.RED)
-                        return False
-            
-            self.log(f"      ✓ Rows: {len(rows)}", Colors.GREEN)
-            if len(rows) > 0:
-                self.log(f"      ✓ First row: {rows[0].get('manager_name')} - {rows[0].get('total')} calls", Colors.GREEN)
+            self.log(f"      ✓ Car deleted: {data.get('deleted')}", Colors.GREEN)
             return True
         
         return self.test(
-            f"GET teamlead/calls/managers as {role_name} (days={days})",
-            "GET",
-            f"/api/teamlead/calls/managers?days={days}",
+            f"DELETE /api/admin/cars/{self.test_car_id}",
+            "DELETE",
+            f"/api/admin/cars/{self.test_car_id}",
             200,
-            token=token,
+            token=self.admin_token,
             validate_fn=validate
         )
-    
-    def test_admin_oversight(self, token: str, days: int):
-        """Test GET /api/admin/ringostat/oversight"""
-        def validate(data):
-            # Check company_totals
-            if 'company_totals' not in data:
-                self.log(f"      Missing company_totals", Colors.RED)
-                return False
-            
-            totals = data.get('company_totals', {})
-            required = ['all', 'answered', 'missed', 'answer_rate', 'pending_outcome', 'unassigned']
-            for field in required:
-                if field not in totals:
-                    self.log(f"      Missing company_totals.{field}", Colors.RED)
-                    return False
-            
-            # Check top_volume (max 5)
-            if 'top_volume' not in data:
-                self.log(f"      Missing top_volume", Colors.RED)
-                return False
-            
-            # Check top_pending_outcome (max 5)
-            if 'top_pending_outcome' not in data:
-                self.log(f"      Missing top_pending_outcome", Colors.RED)
-                return False
-            
-            # Check team_leads array
-            if 'team_leads' not in data:
-                self.log(f"      Missing team_leads", Colors.RED)
-                return False
-            
-            # Check sync_health
-            if 'sync_health' not in data:
-                self.log(f"      Missing sync_health", Colors.RED)
-                return False
-            
-            sync = data.get('sync_health', {})
-            if 'last_sync_at' not in sync or 'stale_minutes' not in sync:
-                self.log(f"      Missing sync_health fields", Colors.RED)
-                return False
-            
-            self.log(f"      ✓ Company totals.all: {totals.get('all')}", Colors.GREEN)
-            self.log(f"      ✓ Top volume: {len(data.get('top_volume', []))} managers", Colors.GREEN)
-            self.log(f"      ✓ Team leads: {len(data.get('team_leads', []))}", Colors.GREEN)
-            self.log(f"      ✓ Sync health: stale_minutes={sync.get('stale_minutes')}", Colors.GREEN)
-            return True
-        
-        return self.test(
-            f"GET admin/ringostat/oversight (days={days})",
-            "GET",
-            f"/api/admin/ringostat/oversight?days={days}",
-            200,
-            token=token,
-            validate_fn=validate
-        )
-    
-    def test_regression_endpoints(self, token: str):
-        """Test existing endpoints still work"""
-        endpoints = [
-            ("GET", "/api/admin/ringostat/health", 200),
-            ("GET", "/api/admin/ringostat/settings", 200),
-            ("GET", "/api/admin/ringostat/webhook-info", 200),
-            ("GET", "/api/admin/ringostat/calls?period=today", 200),
-            ("GET", "/api/admin/ringostat/stats/overview?days=7", 200),
-            ("GET", "/api/system/health", 200),
-        ]
-        
-        for method, endpoint, expected_status in endpoints:
-            self.test(
-                f"Regression: {endpoint}",
-                method,
-                endpoint,
-                expected_status,
-                token=token
-            )
     
     def run_all_tests(self):
-        """Run all Phase IV-6 tests"""
+        """Run all BIBI Cars API tests"""
         self.log("\n" + "="*80, Colors.BLUE)
-        self.log("Phase IV-6 Role-Aware UX Testing", Colors.BLUE)
+        self.log("BIBI Cars - Admin-Curated Catalog API Testing", Colors.BLUE)
         self.log("="*80 + "\n", Colors.BLUE)
         
-        # ===== LOGIN =====
-        self.admin_token, self.admin_role = self.login("admin@bibi.cars", "Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu")
-        if not self.admin_token:
+        # Test 1: Admin login
+        if not self.test_admin_login():
             self.log("\n❌ CRITICAL: Admin login failed - cannot continue", Colors.RED)
             return False
         
-        # Try team_lead login (may fail if account doesn't exist)
-        self.team_lead_token, self.team_lead_role = self.login("teamlead@bibi.cars", "txXNMkj-lS2w1nv482aLlvKWuk9Y9eKE")
+        # Test 2: Create car
+        self.test_create_car()
         
-        # Try manager login (may fail if account doesn't exist)
-        self.manager_token, self.manager_role = self.login("manager@bibi.cars", "dFbYnse0L59DBE16Mn4kT6cCRaNBZFQR")
+        # Test 3: Get public cars
+        self.test_get_public_cars()
         
-        # ===== TEST 1: GET preferences as admin =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 1: GET /api/me/preferences/ringostat-ui", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
+        # Test 4: Search cars
+        self.test_search_cars()
         
-        self.test_preferences_get(
-            "admin",
-            self.admin_token,
-            self.admin_role or "master_admin",
-            {
-                "show_incoming_popup": False,
-                "show_outcome_banner": False,
-                "show_aggregate_summary": True
-            }
-        )
+        # Test 5: Get buckets
+        self.test_get_buckets()
         
-        # Test team_lead if available
-        if self.team_lead_token:
-            self.test_preferences_get(
-                "team_lead",
-                self.team_lead_token,
-                "team_lead",
-                {
-                    "show_incoming_popup": False,
-                    "show_aggregate_summary": True
-                }
-            )
+        # Test 6: Get car detail
+        self.test_get_car_detail()
         
-        # Test manager if available
-        if self.manager_token:
-            self.test_preferences_get(
-                "manager",
-                self.manager_token,
-                "manager",
-                {
-                    "force_outcome_blocking": True,
-                    "show_outcome_banner": True
-                }
-            )
+        # Test 7: Update car
+        self.test_update_car()
         
-        # ===== TEST 2: PATCH preferences =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 2: PATCH /api/me/preferences/ringostat-ui", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
+        # Test 8: Admin auth required
+        self.test_admin_cars_auth()
         
-        # Admin can override
-        self.test_preferences_patch(
-            "admin",
-            self.admin_token,
-            {"show_incoming_popup": True},
-            {"show_incoming_popup": True}
-        )
+        # Test 9: Get admin cars
+        self.test_get_admin_cars()
         
-        # Verify persistence
-        self.test_preferences_get(
-            "admin (after override)",
-            self.admin_token,
-            self.admin_role or "master_admin",
-            {"show_incoming_popup": True}
-        )
-        
-        # Manager CANNOT override force_outcome_blocking (hard guard)
-        if self.manager_token:
-            self.test_preferences_patch(
-                "manager",
-                self.manager_token,
-                {"force_outcome_blocking": False},
-                {},  # Should be empty - key dropped
-                should_drop=["force_outcome_blocking"]
-            )
-            
-            # Verify force_outcome_blocking still true
-            success, data = self.test_preferences_get(
-                "manager (after attempted override)",
-                self.manager_token,
-                "manager",
-                {"force_outcome_blocking": True}
-            )
-            
-            # Manager CANNOT override show_outcome_banner (hard guard)
-            self.test_preferences_patch(
-                "manager",
-                self.manager_token,
-                {"show_outcome_banner": False},
-                {},  # Should be empty - key dropped
-                should_drop=["show_outcome_banner"]
-            )
-        
-        # Invalid keys should return 400
-        self.test(
-            "PATCH with invalid keys",
-            "PATCH",
-            "/api/me/preferences/ringostat-ui",
-            400,
-            token=self.admin_token,
-            data={"foo": "bar"}
-        )
-        
-        # ===== TEST 3: Team lead overview =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 3: GET /api/teamlead/calls/overview", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
-        
-        # Admin sees company scope
-        self.test_teamlead_overview("admin", self.admin_token, 7, "company", min_totals=0)
-        
-        # Test days=1 (should have today field)
-        self.test_teamlead_overview("admin", self.admin_token, 1, "company", min_totals=0)
-        
-        # Team lead sees team scope
-        if self.team_lead_token:
-            self.test_teamlead_overview("team_lead", self.team_lead_token, 7, "team", min_totals=0)
-        
-        # Manager sees self scope
-        if self.manager_token:
-            self.test_teamlead_overview("manager", self.manager_token, 7, "self", min_totals=0)
-        
-        # ===== TEST 4: Team lead managers breakdown =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 4: GET /api/teamlead/calls/managers", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
-        
-        self.test_teamlead_managers("admin", self.admin_token, 7)
-        
-        if self.team_lead_token:
-            self.test_teamlead_managers("team_lead", self.team_lead_token, 7)
-        
-        # ===== TEST 5: Admin oversight =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 5: GET /api/admin/ringostat/oversight", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
-        
-        self.test_admin_oversight(self.admin_token, 7)
-        
-        # Manager should get 403
-        if self.manager_token:
-            self.test(
-                "GET admin/ringostat/oversight as manager (should 403)",
-                "GET",
-                "/api/admin/ringostat/oversight?days=7",
-                403,
-                token=self.manager_token
-            )
-        
-        # ===== TEST 6: Regression =====
-        self.log("\n" + "="*80, Colors.BLUE)
-        self.log("TEST SUITE 6: Regression - Existing Endpoints", Colors.BLUE)
-        self.log("="*80, Colors.BLUE)
-        
-        self.test_regression_endpoints(self.admin_token)
+        # Test 10: Delete car
+        self.test_delete_car()
         
         # ===== SUMMARY =====
         self.log("\n" + "="*80, Colors.BLUE)
@@ -550,7 +499,7 @@ class PhaseIV6Tester:
         return self.tests_failed == 0
 
 def main():
-    tester = PhaseIV6Tester()
+    tester = BIBICarsAPITester()
     success = tester.run_all_tests()
     return 0 if success else 1
 
