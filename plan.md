@@ -70,23 +70,32 @@ returns the record with computed budget_bucket="25_40k" and auto-generated slug.
 
 ---
 
-## Phase 7 — Final E2E test (PENDING)
-Run `testing_agent_v3` to validate the full curated catalog flow against the
-deployed preview URL. Cover:
-1. Admin login → create car (RU/EN title, badge, price, mileage, options) → publish.
-2. Upload 3 images, verify thumbnails, set order, delete one.
-3. Public home: budget chip "25-40K" → see the Audi card; click → opens detail.
-4. Header search: type "audi" → suggestion list; type "lambo" → empty CTA opens lead modal.
-5. SingleCarPage: hero, badge, approximate-price disclaimer, expert note shown in
-   selected language; "Request a quote" opens GetInTouch with car_preference="Audi A6 2022".
-6. Admin DnD reorder of the homepage; refresh home and verify new order.
-7. Verify /catalog → / redirect; verify parser admin routes redirect to /admin.
+## Phase 7 — Final E2E test (DONE)
+Tested via `testing_agent_v3`. Results:
+- **Backend: 100%** — all 11 endpoints (login, create/update/delete car, public list,
+  search, buckets, detail, reorder, auth-guard) pass.
+- **Frontend: 95%** — 1 MEDIUM bug found: search suggestions weren't clickable due to
+  `transform: scale()` on `ScaledChrome` creating a containing block that trapped the
+  dropdown's z-index, allowing `.heroContent { isolation: isolate }` to paint over it.
+
+### Post-test fix (DONE)
+- `frontend/src/components/public/ScaledChrome.jsx` — added `zIndex: 100` and explicit
+  `position: relative` to the outer wrapper. Re-verified via Playwright:
+  - Search "audi" → dropdown shows on top of hero, clicking suggestion navigates to
+    `/cars/audi-a6-2022-c3aa89` ✓
+  - Search "lambo" → empty-state CTA opens GetInTouchModal (`FORM.git2-form`) ✓
+  - Home deal card "MORE DETAILS" → navigates to detail page ✓
+- `frontend/src/figma_home/components/header1.module.css` — also bumped
+  `.header` from `z-index: 5` to `z-index: 50` + `position: relative` for cleaner
+  stacking; both fixes together make the dropdown-over-hero interaction robust.
 
 ## Test credentials
 - Admin: `admin@bibi.cars` / `Jp3FS_7ZuE2bhHp7rFkJm9B9T_TeiHxu`
-- Customer (seeded): `user@bibi.cars` / `bibi-demo-1`
+- Customer (seeded): `user@bibi.cars` / `User_bibi_2026!`
+- Customer (test bypass): `test@customer.com` / `test123`
 
 ## API Base
 - Preview URL: https://car-rental-26.preview.emergentagent.com
 - Local backend: http://localhost:8001 (FastAPI)
 - Local frontend dev: http://localhost:3000 (craco)
+

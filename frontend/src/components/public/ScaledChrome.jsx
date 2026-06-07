@@ -58,6 +58,15 @@ export default function ScaledChrome({ children }) {
         overflowY: "visible",               /* …but let header dropdowns escape */
         background: "#F5F0E8",
         position: "relative",
+        /* Header search autocomplete dropdown extends visually below the
+         * scaled chrome and overlaps the next section (hero / page body).
+         * Without an explicit z-index, the inner `transform: scale()` traps
+         * the dropdown inside this wrapper which itself stacks at `auto`,
+         * so any sibling section that creates its own stacking context
+         * (`.heroContent { isolation: isolate }`) paints on top and steals
+         * pointer events. Lifting the wrapper to z-index 100 keeps the
+         * chrome — and any escaping dropdown — above the page body. */
+        zIndex: 100,
         height: innerHeight ? innerHeight * scale : "auto",
       }}
     >

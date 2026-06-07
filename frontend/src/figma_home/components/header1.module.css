@@ -25,7 +25,11 @@
   flex-direction: column;
   overflow: visible;
   box-sizing: border-box;
-  z-index: 5;
+  /* Header must out-stack the hero's `isolation: isolate` context so the
+     search autocomplete dropdown (z-index: 1100) actually receives clicks
+     instead of being intercepted by `.heroContent`. */
+  position: relative;
+  z-index: 50;
   text-align: left;
   font-size: var(--fs-16);
   color: var(--color-orange-100);
