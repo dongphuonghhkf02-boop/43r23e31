@@ -84,7 +84,7 @@ const Homepage1 = ()=> {
         </div>
       </section>
       <BrandLogos1 />
-      <section className={styles.rectangleParent}>
+      <section className={styles.rectangleParent} id="curated-deals">
         <div className={styles.frameChild} />
         <VehicleDeals1 count={dealsCount} topN={9} />
         <FrameComponent20

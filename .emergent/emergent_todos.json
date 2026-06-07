@@ -1,0 +1,30 @@
+[
+  {
+    "content": "Phase 1: Hero search Brand/Model/Year → open GetInTouchModal с prefilled (FC18)",
+    "status": "in_progress"
+  },
+  {
+    "content": "Phase 2: BrandLogos1 — убрать expand/collapse, hover label, replace links на scroll к curated section",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 3: Footer1 — удалить hero band «Поговорим / Привезём авто мечты с аукциона»",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 4: Создать переиспользуемый LeadCtaBand (navy block в стиле SingleCarPage)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 5: CalculatorPage — добавить LeadCtaBand",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 6: ContactsPage — добавить LeadCtaBand",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 7: Visual smoke-test всех изменений",
+    "status": "pending"
+  }
+]

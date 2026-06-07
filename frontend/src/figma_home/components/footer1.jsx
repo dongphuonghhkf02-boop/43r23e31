@@ -198,50 +198,17 @@ const Footer1 = ({ className = "" }) => {
 
   return (
     <section className={[styles.footer, className].join(" ")}>
-      {/* ── (1) TOP HERO BAND ───────────────────────────────────────────── */}
-      <div className={styles.hero}>
-        <span className={`${styles.cornerTick} ${styles.cornerTL}`} aria-hidden="true" />
-        <span className={`${styles.cornerTick} ${styles.cornerBR}`} aria-hidden="true" />
-
-        <div className={styles.heroInner}>
-          <div className={styles.heroLeft}>
-            <span className={styles.eyebrow}>{T.heroEyebrow}</span>
-            <h2 className={styles.heroTitle}>
-              {T.heroTitle.split("\n").map((line, i, arr) => (
-                <span key={i} className={styles.heroTitleLine}>
-                  {line}
-                  {i < arr.length - 1 && <br />}
-                </span>
-              ))}
-            </h2>
-            <p className={styles.heroLead}>{T.heroLead}</p>
-          </div>
-
-          <div className={styles.heroRight}>
-            <div className={styles.heroCtaWrap} data-testid="footer-cta-getintouch-wrap">
-              <BUTTON1
-                property1="Default"
-                cONTACTUS={T.ctaPrimary}
-                showBUTTON
-                bUTTONBackgroundColor="#feae00"
-                bUTTONWidth="232px"
-                bUTTONBorder="none"
-                bUTTONAlignSelf="unset"
-                cONTACTUSColor="#162E51"
-                cONTACTUSTextTransform="uppercase"
-                onClick={() => open()}
-              />
-            </div>
-            <Link
-              to="/"
-              className={styles.heroCtaSecondary}
-              data-testid="footer-cta-catalog"
-            >
-              {T.ctaSecondary} →
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* ── (1) TOP HERO BAND ── REMOVED 2026-06 ─────────────────────────
+       *  The cross-page "ПОГОВОРИМ — Привезём авто мечты с аукциона до
+       *  ключей." banner referenced auction logic that no longer matches
+       *  the admin-curated catalog. The CTA has been replaced by
+       *  page-specific lead bands (see LeadCtaBand on Calculator /
+       *  Contacts / SingleCarPage) so each surface owns its own call to
+       *  action instead of relying on a sweeping footer block.
+       *  Translation strings (heroEyebrow/heroTitle/...) remain in
+       *  FOOTER_T for back-compat with any external code, but are no
+       *  longer rendered here.
+       * ───────────────────────────────────────────────────────────── */
 
       {/* ── (2) MAIN GRID — 4 columns ───────────────────────────────────── */}
       <div className={styles.grid}>

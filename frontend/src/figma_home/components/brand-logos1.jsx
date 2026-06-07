@@ -1,107 +1,72 @@
 /**
- * BrandLogos1 — "Most popular brands" with progressive disclosure.
+ * BrandLogos1 — "Most popular brands" (admin-curated pivot, June 2026).
  *
- *   • DEFAULT row 1 (6 logos): Mercedes-Benz · Jeep · Toyota · BMW ·
- *     Hyundai · Volkswagen
- *   • Click "OTHER BRANDS +" → reveals row 2 (Audi · Ford · Honda · Kia ·
- *     Lexus · Mazda) with a smooth height + opacity transition.
- *   • Click again → reveals row 3 (Nissan · Porsche · Tesla · Chevrolet ·
- *     Dodge · Cadillac).
- *   • A small "← collapse" link appears after the first expand so the
- *     user can fold rows back. When all 18 are visible the toggle
- *     becomes "ALL BRANDS →" and links to `/catalog` for the full filter.
- *   • Each card links to /catalog?make=<Make> with proper-case so the
- *     CatalogPage filter chip pre-selects on first render.
+ * Behavioural rewrite vs. v1:
+ *   • Removed progressive disclosure ("Other brands +" / "Collapse" /
+ *     "All brands →") — there is no longer a public catalogue to expand
+ *     into, so this UI surface is now a single static row of 6 hero
+ *     brands.
+ *   • Removed the on-hover brand-name overlay (Toyota text painting
+ *     over the Toyota mark felt like a duplicate label — UX feedback).
+ *   • Clicking a logo no longer navigates to /catalog. Instead it
+ *     smooth-scrolls down to the curated "Top vehicle deals" section on
+ *     the home page (anchor: `#curated-deals`). The shopper immediately
+ *     sees which of *our* hand-picked cars match the brand they liked.
  *
- *   Design tweak vs. previous build: rows separated by a thin amber
- *   gradient hairline + brand name fades in under the logo on hover.
+ * Layout & visuals (cream backdrop, grayscale logos, amber accent line
+ * under the title) remain identical to the previous design — only the
+ * interaction model changed.
  */
-import { useMemo, useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { useLang } from "../../i18n";
 import useInView from "../../components/useInView";
 import styles from "./brand-logos1.module.css";
 
-/* Brand metadata. `name` matches the API canonical casing so
-   /catalog?make=<name> pre-selects the chip on CatalogPage. */
-const BRAND_TIERS = [
-  // Tier 1 — default visible
-  [
-    { slug: "mercedes",   name: "Mercedes-Benz", label: "Mercedes" },
-    { slug: "jeep",       name: "Jeep" },
-    { slug: "toyota",     name: "Toyota" },
-    { slug: "bmw",        name: "BMW" },
-    { slug: "hyundai",    name: "Hyundai" },
-    { slug: "volkswagen", name: "Volkswagen", label: "VW" },
-  ],
-  // Tier 2 — revealed after first expand
-  [
-    { slug: "audi",   name: "Audi" },
-    { slug: "ford",   name: "Ford" },
-    { slug: "honda",  name: "Honda" },
-    { slug: "kia",    name: "Kia" },
-    { slug: "lexus",  name: "Lexus" },
-    { slug: "mazda",  name: "Mazda" },
-  ],
-  // Tier 3 — revealed after second expand
-  [
-    { slug: "nissan",    name: "Nissan" },
-    { slug: "porsche",   name: "Porsche" },
-    { slug: "tesla",     name: "Tesla" },
-    { slug: "chevrolet", name: "Chevrolet" },
-    { slug: "dodge",     name: "Dodge" },
-    { slug: "cadillac",  name: "Cadillac" },
-  ],
-].map((tier) => tier.map((b) => ({ ...b, src: `/figma/brands/${b.slug}.webp` })));
+/* Brand metadata. Logos live in /public/figma/brands/<slug>.webp.
+   `label` is shown as a text fallback when the logo fails to load. */
+const POPULAR_BRANDS = [
+  { slug: "mercedes",   name: "Mercedes-Benz", label: "Mercedes" },
+  { slug: "jeep",       name: "Jeep" },
+  { slug: "toyota",     name: "Toyota" },
+  { slug: "bmw",        name: "BMW" },
+  { slug: "hyundai",    name: "Hyundai" },
+  { slug: "volkswagen", name: "Volkswagen", label: "VW" },
+].map((b) => ({ ...b, src: `/figma/brands/${b.slug}.webp` }));
+
+/* Click handler — scroll to the curated picks section.
+   We anchor the section via #curated-deals (added in homepage1.jsx). */
+const scrollToCurated = (e) => {
+  if (e?.preventDefault) e.preventDefault();
+  if (typeof window === "undefined") return;
+  const target = document.getElementById("curated-deals");
+  if (target) {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    // Soft fallback — if we're not on the home page, send the user
+    // home and rely on the section being there on next paint.
+    window.location.href = "/#curated-deals";
+  }
+};
 
 const BrandLogos1 = ({ className = "" }) => {
   const { lang } = useLang();
   const isRu = lang === "ru";
-  const T = isRu
-    ? {
-        title: "Популярные бренды",
-        more: "другие бренды +",
-        collapse: "свернуть",
-        allBrands: "все бренды →",
-        browse: (n) => `Перейти к ${n}`,
-      }
-    : {
-        title: "popular brands",
-        more: "other brands +",
-        collapse: "collapse",
-        allBrands: "all brands →",
-        browse: (n) => `Browse ${n}`,
-      };
-
-  // Tier expansion: 1 → only default row, 2 → +tier 2, 3 → all 3 tiers.
-  const [tier, setTier] = useState(1);
-  const visibleTiers = useMemo(() => BRAND_TIERS.slice(0, tier), [tier]);
+  const T = useMemo(
+    () =>
+      isRu
+        ? {
+            title: "Популярные бренды",
+            browse: (n) => `Показать подборку: ${n}`,
+          }
+        : {
+            title: "popular brands",
+            browse: (n) => `Show curated picks: ${n}`,
+          },
+    [isRu],
+  );
 
   // Reveal-on-scroll cascade
   const [sectionRef, inView] = useInView();
-
-  // After the user expands, scroll the newly-revealed row into view smoothly.
-  const containerRef = useRef(null);
-  const prevTier = useRef(tier);
-  useEffect(() => {
-    if (tier > prevTier.current && containerRef.current) {
-      // Defer to next frame so the new row is in the DOM before scrolling.
-      requestAnimationFrame(() => {
-        const rows = containerRef.current.querySelectorAll(`.${styles.brandsGrid}`);
-        const last = rows[rows.length - 1];
-        if (last) last.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      });
-    }
-    prevTier.current = tier;
-  }, [tier]);
-
-  const handleToggleClick = (e) => {
-    if (tier < BRAND_TIERS.length) {
-      e.preventDefault();
-      setTier((v) => Math.min(v + 1, BRAND_TIERS.length));
-    }
-    // When all tiers visible — fall through to <Link> default and navigate to /catalog.
-  };
 
   return (
     <section
@@ -109,84 +74,41 @@ const BrandLogos1 = ({ className = "" }) => {
       className={[styles.brandLogos, className, inView ? "is-visible" : ""].join(" ")}
     >
       <div className={styles.popularBrands}>
-        <div className={styles.rectangleParent} ref={containerRef}>
+        <div className={styles.rectangleParent}>
           <div className={styles.brandsHeader}>
             <h2 className={styles.mostPopularBrands}>{T.title}</h2>
             <span className={styles.titleAccent} aria-hidden="true" />
           </div>
 
-          {visibleTiers.map((tierBrands, tierIdx) => (
-            <div
-              key={`tier-${tierIdx}`}
-              className={[
-                styles.brandsGrid,
-                tierIdx > 0 ? styles.brandsGridExtra : "",
-              ].join(" ")}
-              data-tier={tierIdx}
-            >
-              {tierBrands.map((b, i) => (
-                <Link
-                  to={`/catalog?make=${encodeURIComponent(b.name)}`}
-                  key={b.slug}
-                  className={`${styles.brandItem} ${styles.brandReveal}`}
-                  aria-label={T.browse(b.label || b.name)}
-                  data-testid={`brand-logo-${b.slug}`}
-                  data-row={tierIdx}
-                  style={{ animationDelay: `${(tierIdx === 0 ? 300 : 60) + i * 110}ms` }}
-                >
-                  <img
-                    className={styles.brandLogo}
-                    src={b.src}
-                    alt={b.name}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                      if (e.currentTarget.nextSibling) {
-                        e.currentTarget.nextSibling.style.display = "inline";
-                      }
-                    }}
-                  />
-                  <span className={styles.brandFallback}>{b.label || b.name}</span>
-                  <span className={styles.brandHoverLabel} aria-hidden="true">
-                    {b.label || b.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* Toggle row — expand further OR (when all visible) jump to full catalog */}
-        <div className={styles.otherBrands}>
-          {tier > 1 && (
-            <button
-              type="button"
-              className={styles.collapseBtn}
-              onClick={() => setTier(1)}
-              data-testid="brands-collapse"
-            >
-              ← {T.collapse}
-            </button>
-          )}
-          {tier < BRAND_TIERS.length ? (
-            <button
-              type="button"
-              className={styles.otherBrands2}
-              onClick={handleToggleClick}
-              data-testid="brands-show-more"
-            >
-              {T.more}
-            </button>
-          ) : (
-            <Link
-              to="/catalog"
-              className={styles.otherBrands2}
-              data-testid="brands-all"
-            >
-              {T.allBrands}
-            </Link>
-          )}
+          <div className={styles.brandsGrid} data-tier={0}>
+            {POPULAR_BRANDS.map((b, i) => (
+              <button
+                type="button"
+                key={b.slug}
+                className={`${styles.brandItem} ${styles.brandReveal}`}
+                aria-label={T.browse(b.label || b.name)}
+                data-testid={`brand-logo-${b.slug}`}
+                data-row={0}
+                onClick={scrollToCurated}
+                style={{ animationDelay: `${300 + i * 110}ms` }}
+              >
+                <img
+                  className={styles.brandLogo}
+                  src={b.src}
+                  alt={b.name}
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    if (e.currentTarget.nextSibling) {
+                      e.currentTarget.nextSibling.style.display = "inline";
+                    }
+                  }}
+                />
+                <span className={styles.brandFallback}>{b.label || b.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

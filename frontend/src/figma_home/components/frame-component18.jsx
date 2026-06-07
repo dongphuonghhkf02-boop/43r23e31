@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "./frame-component18.module.css";
 import { CAR_BRANDS, MODELS_BY_BRAND, GENERIC_MODELS, YEARS } from "../../data/cars";
 import { useLang } from "../../i18n";
+import { useGetInTouch } from "../../components/public/GetInTouchModal";
 import { renderKpiWithRolling } from "../../components/RollingNumber";
 import SplitText from "../../components/SplitText";
 
@@ -148,6 +149,7 @@ const Dropdown = ({ label, value, options, onSelect, isOpen, onToggle, searchabl
 const FrameComponent18 = ({ className = "" }) => {
   const { lang } = useLang();
   const isRu = lang === "ru";
+  const { open: openGetInTouch } = useGetInTouch();
 
   const [openMenu, setOpenMenu] = useState(null);
   const [brand, setBrand] = useState("");
@@ -285,21 +287,41 @@ const FrameComponent18 = ({ className = "" }) => {
     return [anyYear, ...YEARS.map((y) => ({ name: String(y), available: true, count: null }))];
   }, [isRu]);
 
-  // FIND A CAR — redirect to /catalog with filters applied using the same
-  // URL params the catalog page itself reads: `make` / `model` / `year_min`
-  // + `year_max`.
+  // SELECT A CAR — since the public catalog has been retired, the hero
+  // Brand / Model / Year picker now serves as the entry point to the
+  // lead-capture flow. We pre-build a human-readable preference string
+  // ("Audi · A6 · 2022") and open the GetInTouch modal so the user only
+  // has to fill in their contact details — no need to re-type the car.
+  // The lead reaches the admin via POST /api/public/lead-requests with
+  // source="home_hero_select".
   const onFind = () => {
-    const params = new URLSearchParams();
-    if (brand) params.set("make", brand);
-    if (model && model !== "Any Model" && model !== "Все модели") {
-      params.set("model", model);
-    }
-    if (year && year !== "Any Year" && year !== "Все годы" && year !== "Любой год") {
-      params.set("year_min", year);
-      params.set("year_max", year);
-    }
-    const qs = params.toString();
-    window.location.href = `/catalog${qs ? "?" + qs : ""}`;
+    const parts = [];
+    if (brand) parts.push(brand);
+    const modelClean =
+      model && model !== "Any Model" && model !== "Все модели" ? model : "";
+    if (modelClean) parts.push(modelClean);
+    const yearClean =
+      year && year !== "Any Year" && year !== "Все годы" && year !== "Любой год"
+        ? year
+        : "";
+    if (yearClean) parts.push(yearClean);
+    const carPref = parts.join(" · ");
+    const title = isRu
+      ? carPref
+        ? `Подобрать: ${carPref}`
+        : "Подбор автомобиля"
+      : carPref
+        ? `Sourcing: ${carPref}`
+        : "Find me a car";
+    const subtitle = isRu
+      ? "Оставьте контакты — менеджер свяжется и подтвердит детали по выбранному авто. Перевыбирать ничего не нужно."
+      : "Leave your contact — our manager will reach out and confirm the details for the car you picked. No need to re-enter anything.";
+    openGetInTouch({
+      source: "home_hero_select",
+      car_preference: carPref,
+      title,
+      subtitle,
+    });
   };
 
   return (
