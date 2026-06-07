@@ -75,7 +75,7 @@
   justify-content: center;
   padding: 14px 28px;
   background: #162E51;
-  color: #F5F0E8;
+  color: #F5F0E8 !important;
   border-radius: 999px;
   font-size: 14px;
   font-weight: 700;
@@ -83,7 +83,7 @@
   text-transform: uppercase;
   transition: background-color 180ms ease, transform 120ms ease;
 }
-.moreBtn:hover { background: #1d3c6b; }
+.moreBtn:hover { background: #1d3c6b; color: #FEAE00 !important; }
 .moreBtn:active { transform: translateY(1px); }
 
 .moreBtnGhost {

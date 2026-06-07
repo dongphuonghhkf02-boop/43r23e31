@@ -35,6 +35,7 @@ const FrameComponent20 = ({ className = "", onChange }) => {
   return (
     <section
       ref={rowRef}
+      id="deals-budget-filter"
       className={[
         styles.frameWrapper,
         className,

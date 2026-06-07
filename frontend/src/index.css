@@ -1371,12 +1371,16 @@ body h1 { font-weight: 600; }
  * fixes (frame-component21, brand-logos1) are committed; this
  * block ensures any FUTURE empty state inheriting class names
  * stays readable.
+ *
+ * NOTE: we exclude `button` (and anything inside a button) so a
+ * legitimate filled CTA inside the empty state keeps its own
+ * colour scheme (e.g. cream text on a navy pill).
  * ============================================================ */
 .public-theme [data-empty-state],
 .public-theme [data-testid$="-empty"] {
   color: var(--bibi-ink) !important;
 }
-.public-theme [data-empty-state] *:not(strong):not(b),
-.public-theme [data-testid$="-empty"] *:not(strong):not(b) {
+.public-theme [data-empty-state] *:not(strong):not(b):not(button):not(button *),
+.public-theme [data-testid$="-empty"] *:not(strong):not(b):not(button):not(button *) {
   color: inherit !important;
 }

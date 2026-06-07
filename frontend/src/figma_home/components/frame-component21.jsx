@@ -202,7 +202,7 @@ const FrameComponent21 = ({ className = "", budget, onCount }) => {
             type="button"
             className={styles.moreBtn}
             onClick={handleLeadOpen}
-            data-testid="lead-cta-from-empty"
+            data-testid="top-deals-empty-cta"
             style={{ marginTop: 6 }}
           >
             {isRu ? "Получить индивидуальный расчёт" : "Get a personal quote"}

@@ -33,14 +33,21 @@ const POPULAR_BRANDS = [
   { slug: "volkswagen", name: "Volkswagen", label: "VW" },
 ].map((b) => ({ ...b, src: `/figma/brands/${b.slug}.webp` }));
 
-/* Click handler — scroll to the curated picks section.
-   We anchor the section via #curated-deals (added in homepage1.jsx). */
+/* Click handler — smooth-scroll to the budget filter so the user lands
+   directly on the curated grid (not on the giant section headline that
+   would otherwise look like a brand-new page). */
 const scrollToCurated = (e) => {
   if (e?.preventDefault) e.preventDefault();
   if (typeof window === "undefined") return;
-  const target = document.getElementById("curated-deals");
+  const target =
+    document.getElementById("deals-budget-filter") ||
+    document.getElementById("curated-deals");
   if (target) {
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Use a small top offset so the eyebrow / filter chips remain visible
+    // and the user can see the immediate context of what they scrolled to.
+    const rect = target.getBoundingClientRect();
+    const top = rect.top + window.pageYOffset - 96;
+    window.scrollTo({ top, behavior: "smooth" });
   } else {
     // Soft fallback — if we're not on the home page, send the user
     // home and rely on the section being there on next paint.

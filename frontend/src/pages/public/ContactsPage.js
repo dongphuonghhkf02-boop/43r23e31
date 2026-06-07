@@ -12,6 +12,7 @@
 
 import React from 'react';
 import PageHero from '../../components/public/PageHero';
+import LeadCtaBand from '../../components/public/LeadCtaBand';
 import { useLang } from '../../i18n';
 import {
   WhatsappLogo,
@@ -340,8 +341,19 @@ export default function ContactsPage() {
           </div>
         </section>
 
-        {/* Final CTA — handled by the global footer hero band. */}
+        {/* Final CTA — page-specific lead band (twin of SingleCarPage). */}
       </div>
+
+      <LeadCtaBand
+        source="contacts_page"
+        titleRu="Не нашли удобный канал?"
+        titleEn="Didn't find a convenient channel?"
+        textRu="Оставьте заявку прямо здесь — менеджер сам выберет, куда вам написать (WhatsApp / Telegram / email) и свяжется в течение 15 минут."
+        textEn="Drop a request right here — the manager will pick the channel for you (WhatsApp / Telegram / email) and reach out within 15 minutes."
+        ctaRu="Связаться с менеджером"
+        ctaEn="Contact the manager"
+        testId="contacts-lead-cta"
+      />
     </div>
   );
 }

@@ -258,26 +258,61 @@ const FrameComponent18 = ({ className = "" }) => {
 
   const toggle = (name) => setOpenMenu((cur) => (cur === name ? null : name));
 
-  // ── Brand options: real DB-backed when available, static fallback otherwise.
+  // ── Brand options: ALWAYS show the full static `CAR_BRANDS` list so the
+  //    shopper can express interest in any brand — even ones we haven't
+  //    sourced yet (lead-capture flow). When the catalog has live counts
+  //    (via /api/public/brands), we overlay the count onto the matching
+  //    static entry. Brands present in the DB but not in our static list
+  //    are appended at the end so we never hide real inventory.
   const brandOptions = useMemo(() => {
     const anyBrand = { name: isRu ? "Все бренды" : "Any Brand", isAnyOption: true, available: true, count: null };
+    const countByName = new Map();
     if (brandsData && brandsData.length) {
-      return [anyBrand, ...brandsData];
+      brandsData.forEach((b) => {
+        if (b && b.name) countByName.set(b.name.toLowerCase(), b);
+      });
     }
-    return [anyBrand, ...CAR_BRANDS.map((n) => ({ name: n, available: true, count: null }))];
+    const staticEntries = CAR_BRANDS.map((n) => {
+      const hit = countByName.get(n.toLowerCase());
+      // Always available — the picker drives lead capture, not a live
+      // catalog filter, so we never hide / dim brands the admin hasn't
+      // sourced yet. The DB count, if any, is shown as a badge.
+      return hit
+        ? { name: n, available: true, count: hit.count ?? null }
+        : { name: n, available: true, count: null };
+    });
+    // Surface DB-only brands (e.g. niche makes the admin added) at the end.
+    const known = new Set(CAR_BRANDS.map((n) => n.toLowerCase()));
+    const extras = (brandsData || [])
+      .filter((b) => b && b.name && !known.has(b.name.toLowerCase()))
+      .map((b) => ({ name: b.name, available: true, count: b.count ?? null }));
+    return [anyBrand, ...staticEntries, ...extras];
   }, [brandsData, isRu]);
 
-  // ── Model options: real DB-backed when a brand is picked; otherwise show
-  //    the static generic models list, all marked as available.
+  // ── Model options: ALWAYS show the full model list for the picked brand
+  //    from `MODELS_BY_BRAND`. If no brand is picked, fall back to a
+  //    generic list. Live counts (from /api/public/models?brand=…) are
+  //    overlaid on matching entries; DB-only models are appended.
   const modelOptions = useMemo(() => {
     const anyModel = { name: isRu ? "Все модели" : "Any Model", isAnyOption: true, available: true, count: null };
+    const countByName = new Map();
     if (modelsData && modelsData.length) {
-      return [anyModel, ...modelsData];
+      modelsData.forEach((m) => {
+        if (m && m.name) countByName.set(m.name.toLowerCase(), m);
+      });
     }
-    if (brand && MODELS_BY_BRAND[brand]) {
-      return [anyModel, ...MODELS_BY_BRAND[brand].map((n) => ({ name: n, available: true, count: null }))];
-    }
-    return [anyModel, ...GENERIC_MODELS.map((n) => ({ name: n, available: true, count: null }))];
+    const staticList = (brand && MODELS_BY_BRAND[brand]) ? MODELS_BY_BRAND[brand] : GENERIC_MODELS;
+    const staticEntries = staticList.map((n) => {
+      const hit = countByName.get(n.toLowerCase());
+      return hit
+        ? { name: n, available: true, count: hit.count ?? null }
+        : { name: n, available: true, count: null };
+    });
+    const known = new Set(staticList.map((n) => n.toLowerCase()));
+    const extras = (modelsData || [])
+      .filter((m) => m && m.name && !known.has(m.name.toLowerCase()))
+      .map((m) => ({ name: m.name, available: true, count: m.count ?? null }));
+    return [anyModel, ...staticEntries, ...extras];
   }, [modelsData, brand, isRu]);
 
   // ── Year options: the catalog has no per-year availability endpoint, so

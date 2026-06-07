@@ -28,6 +28,7 @@ import {
 import { useLang } from '../../i18n';
 import styles from './CalculatorPage.module.css';
 import PageHero from '../../components/public/PageHero';
+import LeadCtaBand from '../../components/public/LeadCtaBand';
 import { trackCalculatorUse, trackLeadSubmit } from '../../lib/tracker';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
@@ -679,6 +680,18 @@ export default function CalculatorPage() {
 
         </div>
       </div>
+
+      {/* ── Bottom lead CTA — twin of SingleCarPage's lead block ── */}
+      <LeadCtaBand
+        source="calculator_page"
+        titleRu="Хотите точную цифру под ваш случай?"
+        titleEn="Want an exact figure for your scenario?"
+        textRu="Калькулятор показывает примерную стоимость. Оставьте контакты — менеджер пересчитает под конкретный лот, учтёт текущий курс и пришлёт расчёт под ключ."
+        textEn="The calculator shows an approximate price. Leave your contact — our manager will redo the math against a specific lot, lock the current FX rate and send a turnkey quote."
+        ctaRu="Получить индивидуальный расчёт"
+        ctaEn="Get a personal quote"
+        testId="calc-lead-cta"
+      />
     </div>
   );
 }
