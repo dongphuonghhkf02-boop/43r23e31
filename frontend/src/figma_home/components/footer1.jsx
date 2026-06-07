@@ -208,7 +208,7 @@ const Footer1 = ({ className = "" }) => {
        *  Translation strings (heroEyebrow/heroTitle/...) remain in
        *  FOOTER_T for back-compat with any external code, but are no
        *  longer rendered here.
-       * ───────────────────────────────────────────────────────────── */
+       * ───────────────────────────────────────────────────────────── */}
 
       {/* ── (2) MAIN GRID — 4 columns ───────────────────────────────────── */}
       <div className={styles.grid}>
