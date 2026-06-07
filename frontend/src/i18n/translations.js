@@ -1369,7 +1369,7 @@ const translations = {
     mobileMenuOpen: 'Open menu',
     mobileMenuClose: 'Close menu',
     contactUs: 'CONTACT US',
-    searchByVinPlaceholder: 'Search by VIN or lot number',
+    searchByVinPlaceholder: 'Search by VIN',
     crumbHome: 'HOME',
     crumbCatalog: 'CATALOG',
     crumbCalculator: 'CALCULATOR',

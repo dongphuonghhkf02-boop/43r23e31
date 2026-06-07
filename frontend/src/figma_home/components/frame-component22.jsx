@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CarSearchDropdown from "../../components/public/CarSearchDropdown";
 import AnimatedHeading from "../../components/AnimatedHeading";
 import useInView from "../../components/useInView";
@@ -48,10 +48,9 @@ const FrameComponent22 = ({ className = "" }) => {
         line2: "за минуту",
         subtitle: "Расскажите модель — менеджер подберёт варианты и посчитает доставку, таможню и регистрацию под ключ.",
         sourceLabel: "Из Европы",
-        searchPlaceholder: "Например, Audi A6",
+        searchPlaceholder: "Какой автомобиль вы ищете?",
         searchAria: "Поиск по марке и модели",
         calculate: "Рассчитать",
-        allCatalog: "Весь каталог",
         trust1: "Цена под ключ",
         trust2: "Без скрытых комиссий",
         trust3: "Расчёт за минуту",
@@ -64,10 +63,9 @@ const FrameComponent22 = ({ className = "" }) => {
         line2: "in a minute",
         subtitle: "Tell us the model — our manager will pick options and quote turnkey transport, customs and registration.",
         sourceLabel: "From Europe",
-        searchPlaceholder: "e.g. Audi A6",
+        searchPlaceholder: "What car are you looking for?",
         searchAria: "Search by make and model",
         calculate: "Calculate",
-        allCatalog: "Full catalog",
         trust1: "Turnkey price",
         trust2: "No hidden fees",
         trust3: "1-minute estimate",
@@ -170,12 +168,6 @@ const FrameComponent22 = ({ className = "" }) => {
                     <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </button>
-                <Link to="/catalog" className={styles.allCatalog} data-testid="welcome-all-catalog">
-                  {T.allCatalog}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
               </div>
             </form>
 

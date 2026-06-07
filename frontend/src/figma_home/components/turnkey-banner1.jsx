@@ -106,7 +106,7 @@ const T = {
       {
         title: "Purchase & pickup",
         desc:
-          "We close the deal with the seller or auction, pay, collect the documents and pick the car up from the lot.",
+          "We close the deal with the seller or auction, pay, collect the documents and pick the car up from the yard.",
       },
       {
         title: "Delivery to your door",
@@ -115,8 +115,8 @@ const T = {
       },
     ],
     ctaTitle: "Ready to start?",
-    ctaSub: "Pick a car from the live catalogue — we'll handle the rest.",
-    ctaButton: "Choose a car",
+    ctaSub: "Tell us what to find — we'll handle the rest.",
+    ctaButton: "Find me a car",
     chatTitle: "Talk to a manager",
     chatSub: "We answer in Telegram and WhatsApp within minutes during working hours.",
     chatTelegram: "Open Telegram",
@@ -160,7 +160,7 @@ const T = {
       {
         title: "Заявка и бриф",
         desc:
-          "Вы оставляете запрос: бюджет, модель, ключевые пожелания. Мы согласуем задачу и предлагаем шорт-лист актуальных лотов.",
+          "Вы оставляете запрос: бюджет, модель, ключевые пожелания. Мы согласуем задачу и предлагаем шорт-лист актуальных вариантов.",
       },
       {
         title: "Оценка качества",
@@ -184,7 +184,7 @@ const T = {
       },
     ],
     ctaTitle: "Готовы начать?",
-    ctaSub: "Выберите автомобиль в каталоге — остальное мы возьмём на себя.",
+    ctaSub: "Расскажите, что подобрать, — остальное мы возьмём на себя.",
     ctaButton: "Подобрать автомобиль",
     chatTitle: "Связаться с менеджером",
     chatSub: "Отвечаем в Telegram и WhatsApp в течение нескольких минут в рабочее время.",
@@ -448,7 +448,7 @@ const TurnkeyBanner1 = ({ className = "" }) => {
               </p>
             </div>
             <Link
-              to="/catalog"
+              to="/#deals-budget-filter"
               className="inline-flex items-center justify-center gap-2 h-[56px] px-8 rounded bg-white text-[var(--accent-brand)] font-semibold uppercase text-[13px] tracking-wider hover:bg-[var(--bg-base)] transition-colors whitespace-nowrap"
               data-testid="turnkey-cta-choose-car"
             >

@@ -41,7 +41,7 @@ const T = {
       "Customs & VAT paperwork",
       "Door-to-door drop-off",
     ],
-    card1Cta: "Just hand us the lot link.",
+    card1Cta: "Just send us the link to the car.",
 
     // ── Card 2 — Expert match (popular)
     card2Tag: "Expert match",
@@ -88,7 +88,7 @@ const T = {
       "Таможенное оформление",
       "Доставка к двери",
     ],
-    card1Cta: "Просто пришлите ссылку на лот.",
+    card1Cta: "Просто пришлите ссылку на машину.",
 
     // ── Card 2 — Эксперт (популярный)
     card2Tag: "Эксперт",

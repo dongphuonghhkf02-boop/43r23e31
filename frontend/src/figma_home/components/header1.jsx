@@ -294,7 +294,7 @@ const Header1 = ({ className = "" }) => {
               />
               <input
                 className={styles.searchByVin}
-                placeholder={lang === "ru" ? "Поиск авто, например Audi" : "Search e.g. Audi"}
+                placeholder={lang === "ru" ? "Поиск авто" : "Search a car"}
                 type="text"
                 value={vinQuery}
                 onChange={(e) => { setVinQuery(e.target.value); setVinOpen(true); }}
