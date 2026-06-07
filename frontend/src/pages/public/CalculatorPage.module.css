@@ -1,0 +1,507 @@
+/* =========================================================================
+ *  CalculatorPage — DM Auto under-key customs calculator
+ *
+ *  Design language: matches figma_home Welcome page (frame-component26 etc.):
+ *    • Cream `#F5F0E8` page background
+ *    • Editorial section header with amber `//` kicker + large navy headline
+ *    • White card with soft shadow for the form, inset card for the estimate
+ *    • Navy primary `#162E51`, amber accent `#F5A524`
+ *    • NO brackets [ ] — that idiom is retired across the site
+ * ====================================================================== */
+
+.calcPage {
+  background: #F5F0E8;
+  color: #17202A;
+  font-family: 'Mazzard H', var(--font-mazzard, system-ui, sans-serif);
+  width: 100%;
+  padding-bottom: 96px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 0 100px;
+  box-sizing: border-box;
+}
+
+/* ── Editorial section header (replaces old bracket subtitle) ─────── */
+.editorialHead {
+  max-width: 880px;
+  margin: 24px 0 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #F5A524;          /* amber accent — same as advantages section */
+}
+.headline {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(28px, 3.2vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  color: #162E51;
+  text-wrap: balance;
+}
+.subline {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #51606D;
+  max-width: 720px;
+}
+
+/* ── Main calculator card ─────────────────────────────────────────── */
+.calcBlock {
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 14px 44px rgba(22, 46, 81, 0.07);
+  padding: 48px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: stretch;
+}
+
+.col { display: flex; flex-direction: column; min-width: 0; }
+.colRight {
+  background: #F8F5EF;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: inset 0 0 0 1px #ECE5DA;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #E6DED4;
+}
+.sectionHead h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #162E51;
+}
+
+/* ── Form fields ──────────────────────────────────────────────────── */
+.formStack { display: flex; flex-direction: column; gap: 20px; }
+.field { display: flex; flex-direction: column; gap: 9px; }
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6E7C88;
+}
+.req { color: #F5A524; margin-left: 2px; }
+
+/* ── Country segmented buttons ───────────────────────────────────── */
+.ctryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.ctryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 18px;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6E7C88;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+.ctryBtn:hover { border-color: #C9BFB1; color: #17202A; }
+.ctryBtn.ctryActive {
+  background: #162E51;
+  border-color: #162E51;
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(22, 46, 81, 0.22);
+}
+.flag {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Compact vehicle type — 64 px tall, mini-icon left, label right ── */
+.vehRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.vehCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 64px;
+  padding: 0 8px;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6E7C88;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+.vehCard:hover { border-color: #C9BFB1; color: #17202A; }
+.vehCard.vehCardActive {
+  background: #162E51;
+  border-color: #162E51;
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(22, 46, 81, 0.22);
+}
+.vehIcon {
+  width: 34px;
+  height: 24px;
+  flex-shrink: 0;
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+}
+
+/* ── Fuel type — 4 buttons in a row ───────────────────────────────── */
+.fuelRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.fuelBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 42px;
+  padding: 0 10px;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6E7C88;
+  cursor: pointer;
+  transition: all 160ms ease;
+  white-space: nowrap;
+}
+.fuelBtn:hover { border-color: #C9BFB1; color: #17202A; }
+.fuelBtn.fuelActive {
+  background: #162E51;
+  border-color: #162E51;
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(22, 46, 81, 0.22);
+}
+.fuelIcon {
+  flex-shrink: 0;
+  display: block;
+  color: currentColor;
+}
+
+/* ── Standard input shell (price field) ──────────────────────────── */
+.inputShell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  transition: border-color 160ms ease;
+}
+.inputShell:focus-within { border-color: #162E51; }
+.inputShell .prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  color: #162E51;
+  font-weight: 700;
+  font-size: 15px;
+}
+.txtInput {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #17202A;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  height: 100%;
+  cursor: text;
+  appearance: none;
+}
+.txtInput::placeholder { color: #9AA5AF; }
+
+/* ── Custom dropdown (replaces native <select>) ───────────────────── */
+.dropdown {
+  position: relative;
+}
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #17202A;
+  text-align: left;
+  transition: border-color 160ms ease;
+  box-sizing: border-box;
+}
+.dropdownTrigger:hover { border-color: #C9BFB1; }
+.dropdownTrigger.isOpen,
+.dropdownTrigger.isFocused { border-color: #162E51; }
+.dropdownTrigger.isPlaceholder { color: #9AA5AF; }
+.dropdownCaret {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: #6E7C88;
+  transition: transform 160ms ease;
+}
+.dropdownTrigger.isOpen .dropdownCaret { transform: rotate(180deg); color: #162E51; }
+.dropdownPanel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: #FFFFFF;
+  border: 1px solid #E6DED4;
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(22, 46, 81, 0.14);
+  padding: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  /* fancy scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #C9BFB1 transparent;
+}
+.dropdownPanel::-webkit-scrollbar { width: 6px; }
+.dropdownPanel::-webkit-scrollbar-thumb { background: #C9BFB1; border-radius: 999px; }
+.dropdownOption {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #17202A;
+  text-align: left;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.dropdownOption:hover { background: rgba(22, 46, 81, 0.06); }
+.dropdownOption.isSelected {
+  background: #162E51;
+  color: #FFFFFF;
+}
+.dropdownOption.isSelected:hover { background: #1A3661; }
+
+/* ── Right column — Cost estimate ─────────────────────────────────── */
+.estStack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+}
+.estGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-bottom: 16px;
+  border-bottom: 1px dashed #E6DED4;
+}
+.estGroup:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.estRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lbl {
+  font-size: 13px;
+  color: #51606D;
+  font-weight: 500;
+}
+.val {
+  font-size: 14px;
+  color: #17202A;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.estGroupTotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #D8D0C6;
+}
+.gtLbl {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #162E51;
+}
+.gtVal {
+  font-size: 16px;
+  font-weight: 700;
+  color: #162E51;
+  font-variant-numeric: tabular-nums;
+}
+.routeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: rgba(245, 165, 36, 0.12);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #B66E0B;
+  margin-bottom: 4px;
+  width: fit-content;
+}
+.grandTotal {
+  background: #162E51;
+  color: #FFFFFF;
+  border-radius: 12px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  box-shadow: 0 12px 28px rgba(22, 46, 81, 0.22);
+}
+.grandTotal h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+}
+.totalVal {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: #FFFFFF !important;
+  font-variant-numeric: tabular-nums;
+}
+.disclaimer {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #6E7C88;
+  padding: 10px 14px;
+  background: rgba(245, 165, 36, 0.08);
+  border-left: 3px solid #F5A524;
+  border-radius: 6px;
+}
+.em {
+  font-weight: 700;
+  color: #B66E0B;
+  margin-right: 2px;
+}
+.ctaBtn {
+  margin-top: 4px;
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 10px;
+  background: #F5A524;
+  color: #162E51;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 160ms ease;
+  box-shadow: 0 10px 22px rgba(245, 165, 36, 0.32);
+}
+.ctaBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(245, 165, 36, 0.4);
+  background: #FFB13A;
+}
+.ctaBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* =====================================================================
+ *  Responsive
+ * ===================================================================== */
+@media (max-width: 1280px) {
+  .container { padding: 0 48px; }
+  .calcBlock { padding: 36px; gap: 32px; }
+}
+@media (max-width: 980px) {
+  .container { padding: 0 24px; }
+  .calcBlock {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 24px;
+  }
+  .colRight { padding: 22px; }
+}
+@media (max-width: 600px) {
+  .vehRow { grid-template-columns: repeat(2, 1fr); }
+  .fuelRow { grid-template-columns: repeat(2, 1fr); }
+  .calcBlock { padding: 18px; }
+  .colRight { padding: 16px; }
+}

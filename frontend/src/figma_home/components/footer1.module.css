@@ -1,0 +1,700 @@
+/* =============================================================================
+ * DM Auto — Footer v2 (editorial-modern, anchored to 1920px native width)
+ * =============================================================================
+ *
+ * Rendered inside <ScaledChrome> so it always renders at 1920px and scales
+ * down proportionally on smaller viewports. The footer is composed of four
+ * stacked bands:
+ *
+ *   1. .hero          — top oversized CTA band (corner-ticked)
+ *   2. .grid          — 4-column main content (Brand / Explore / Contact / Touch)
+ *   3. .wordmarkBand  — giant "DM AUTO" signature wordmark
+ *   4. .legal         — bottom legal strip
+ *
+ * Palette / type tokens follow the rest of the site:
+ *   • Cream surface     #F5F0E8           (parent ScaledChrome bg)
+ *   • Navy (primary)    #162E51           (--color-orange-100)
+ *   • Amber             #FEAE00
+ *   • Font              Mazzard H + Mazzard
+ * ========================================================================== */
+
+.footer {
+  position: relative;
+  width: 1920px;
+  background-color: transparent;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  color: var(--color-orange-100);
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 10;
+  padding: 0 100px 0;
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * (1) TOP HERO BAND
+ * ────────────────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  margin: 80px 0 0;
+  padding: 88px 96px 96px;
+  background: linear-gradient(135deg, #162E51 0%, #0d1f3a 100%);
+  color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Subtle amber radial accent in the top-right of the hero */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: -120px -120px auto auto;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(
+    circle at center,
+    rgba(254, 174, 0, 0.22) 0%,
+    rgba(254, 174, 0, 0.06) 35%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 96px;
+  align-items: end;
+}
+
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #feae00;
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 78px;
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+}
+.heroTitleLine {
+  display: inline;
+}
+
+.heroLead {
+  max-width: 640px;
+  margin: 8px 0 0;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.heroRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 22px;
+  padding-bottom: 6px;
+}
+
+.heroCtaWrap {
+  /* The BUTTON1 component renders an internal pill — we leave its sizing
+     alone (driven by bUTTONWidth/bUTTONBackgroundColor props). */
+}
+
+.heroCtaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  transition: color .25s ease, border-color .25s ease, transform .25s ease;
+}
+.heroCtaSecondary:hover {
+  color: #feae00;
+  border-color: #feae00;
+  transform: translateX(4px);
+}
+
+/* L-shaped corner ticks (TL + BR) on the hero band */
+.cornerTick {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: rgba(254, 174, 0, 0.7);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.cornerTL {
+  top: 18px;
+  left: 18px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-top-left-radius: 6px;
+}
+.cornerBR {
+  bottom: 18px;
+  right: 18px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  border-bottom-right-radius: 6px;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * (2) MAIN GRID
+ * ────────────────────────────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.8fr 1.1fr 1.05fr;
+  gap: 64px;
+  padding: 96px 24px 80px;
+  border-bottom: 1px solid rgba(22, 46, 81, 0.12);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-width: 0;
+}
+
+.colHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.colAccent {
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background-color: #feae00;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.colTitle {
+  margin: 0;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-orange-100);
+}
+
+/* Col 1 — Brand */
+.brandLogo {
+  width: 220px;
+  height: auto;
+  display: block;
+  margin: 0;
+}
+.brandTag {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(22, 46, 81, 0.72);
+  max-width: 320px;
+}
+.brandHours {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(22, 46, 81, 0.18);
+}
+.brandHoursLabel {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(22, 46, 81, 0.55);
+}
+.brandHoursVal {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-orange-100);
+}
+
+/* Col 2 — Explore */
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(22, 46, 81, 0.1);
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-orange-100);
+  text-decoration: none;
+  transition: color .25s ease, padding-left .25s ease;
+}
+.navItem:hover {
+  color: #feae00;
+  padding-left: 6px;
+}
+.navArrow {
+  font-size: 16px;
+  font-weight: 500;
+  opacity: 0.5;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.navItem:hover .navArrow {
+  opacity: 1;
+  transform: translate(2px, -2px);
+}
+
+/* Col 3 — Contact */
+.contactGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.contactLabel {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: rgba(22, 46, 81, 0.55);
+}
+.phoneList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.phoneLink {
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-orange-100);
+  text-decoration: none;
+  transition: color .25s ease;
+  letter-spacing: -0.005em;
+}
+.phoneLink:hover { color: #feae00; }
+
+.addressList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 17px;
+  line-height: 1.45;
+  font-weight: 500;
+  color: var(--color-orange-100);
+}
+.addressList li {
+  padding-left: 14px;
+  position: relative;
+}
+.addressList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 6px;
+  height: 1px;
+  background-color: rgba(22, 46, 81, 0.4);
+}
+
+.registrationVal {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: rgba(22, 46, 81, 0.72);
+}
+
+/* Col 4 — Stay Connected (Telegram + Social) */
+.telegramCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 26px;
+  background: linear-gradient(135deg, rgba(22, 46, 81, 0.04) 0%, rgba(254, 174, 0, 0.06) 100%);
+  border: 1px solid rgba(22, 46, 81, 0.1);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--color-orange-100);
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.telegramCard .cornerTick {
+  border-color: rgba(22, 46, 81, 0.6);
+  width: 20px;
+  height: 20px;
+}
+.telegramCard .cornerTL { top: 10px; left: 10px; }
+.telegramCard .cornerBR { bottom: 10px; right: 10px; }
+.telegramCard:hover {
+  transform: translateY(-2px);
+  border-color: #feae00;
+  box-shadow: 0 8px 24px rgba(22, 46, 81, 0.08);
+}
+.telegramBody {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.telegramIcon {
+  flex-shrink: 0;
+  display: block;
+}
+.telegramLabel {
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--color-orange-100);
+}
+.telegramArrow {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--color-orange-100);
+  opacity: 0.5;
+  transition: opacity .25s ease, transform .25s ease;
+  flex-shrink: 0;
+}
+.telegramCard:hover .telegramArrow {
+  opacity: 1;
+  transform: translateX(4px);
+  color: #feae00;
+}
+
+.socialBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.socialRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.socialChip {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(22, 46, 81, 0.18);
+  border-radius: 999px;
+  background-color: transparent;
+  transition: transform .25s ease, border-color .25s ease, background-color .25s ease;
+}
+.socialChip:hover {
+  border-color: #feae00;
+  background-color: rgba(254, 174, 0, 0.1);
+  transform: translateY(-2px);
+}
+.socialIcon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  object-fit: contain;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * (3) BRAND STATEMENT BAND — replaces the standalone giant wordmark.
+ * Now a structured band with eyebrow + back-to-top on top, and a
+ * thoughtful wordmark + tagline composition below.
+ * ────────────────────────────────────────────────────────────────────────── */
+.brandBand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 48px 24px 56px;
+  border-top: 1px solid rgba(22, 46, 81, 0.12);
+  overflow: hidden;
+}
+
+.brandBandTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.brandBandEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #feae00;
+}
+
+.backToTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid rgba(22, 46, 81, 0.18);
+  border-radius: 999px;
+  background-color: transparent;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-orange-100);
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.backToTop:hover {
+  border-color: #feae00;
+  background-color: rgba(254, 174, 0, 0.1);
+  transform: translateY(-2px);
+}
+.backToTopArrow {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform .25s ease;
+}
+.backToTop:hover .backToTopArrow { transform: translateY(-3px); }
+
+/* Core wordmark — vertical footprint is preserved at ~ 238 px (same as the
+   previous single-line outline-only design) so the brand-band keeps its
+   current overall height and width.
+
+   Composition:
+     ┌─────────────────────────┐
+     │       [ EST. 2020 ]     │  ← floating chip (amber border + ticked)
+     │                         │
+     │   DM  ─ • ─  AUTO       │  ← split: solid · divider · outline
+     └─────────────────────────┘
+*/
+.brandBandCore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 8px 0 12px;
+}
+
+.wordmark {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 18px;        /* room for the floating chip */
+}
+
+/* "EST. 2020" floating chip above the wordmark — small, refined,
+   acts as a typographic anchor so the wordmark doesn't feel orphan. */
+.wordmarkChip {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background-color: #F5F0E8;        /* cream — matches parent surface */
+  border: 1px solid rgba(254, 174, 0, 0.55);
+  border-radius: 999px;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #feae00;
+  white-space: nowrap;
+}
+
+.wordmarkRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 1.8vw, 36px);
+  line-height: 0.85;
+  white-space: nowrap;
+}
+
+/* "DM" — solid navy filled letters with a subtle gradient for depth. */
+.wordmarkSolid {
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 240px;
+  line-height: 0.85;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  /* Subtle navy gradient (top to bottom) so the solid block reads as
+     "engraved" rather than flat — gives the wordmark a premium feel. */
+  background: linear-gradient(180deg, #162E51 0%, #1e3d6b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  user-select: none;
+  display: inline-block;
+}
+
+/* Stylised mid-divider — bar / dot / bar — amber. Visually separates
+   DM from AUTO and gives the composition a focal anchor. */
+.wordmarkDivider {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  height: 240px;
+  padding: 0 4px;
+}
+.wordmarkDividerBar {
+  display: inline-block;
+  width: 36px;
+  height: 2px;
+  background-color: #feae00;
+  border-radius: 2px;
+}
+.wordmarkDividerDot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #feae00;
+  box-shadow: 0 0 0 6px rgba(254, 174, 0, 0.18);
+}
+
+/* "AUTO" — outline-stroke navy letters (kept the spirit of the old
+   wordmark but now contrasted with the filled "DM" block). */
+.wordmarkOutline {
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 240px;
+  line-height: 0.85;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  color: transparent;
+  -webkit-text-stroke: 2.5px rgba(22, 46, 81, 0.55);
+  text-stroke: 2.5px rgba(22, 46, 81, 0.55);
+  user-select: none;
+  display: inline-block;
+}
+
+.brandBandTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  font-style: italic;
+  color: rgba(22, 46, 81, 0.72);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.brandBandTag::before,
+.brandBandTag::after {
+  content: "";
+  display: inline-block;
+  width: 56px;
+  height: 1px;
+  background-color: rgba(22, 46, 81, 0.25);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * (4) LEGAL STRIP — copyright + policy links only
+ * ────────────────────────────────────────────────────────────────────────── */
+.legal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 24px 24px 56px;
+  border-top: 1px solid rgba(22, 46, 81, 0.12);
+  flex-wrap: wrap;
+}
+.legalLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.legalCopyIcon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  display: block;
+  flex-shrink: 0;
+}
+.legalCopy {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(22, 46, 81, 0.7);
+  letter-spacing: 0.02em;
+}
+.legalRight {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.legalItem {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(22, 46, 81, 0.7);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: default;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.legalBtn { cursor: pointer; transition: color .25s ease; }
+.legalBtn:hover { color: #feae00; text-decoration: underline; }
+.legalDot {
+  font-size: 13px;
+  color: rgba(22, 46, 81, 0.35);
+}

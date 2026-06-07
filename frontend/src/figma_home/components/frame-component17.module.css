@@ -1,0 +1,127 @@
+/* ── Right-side controls (language, profile, CONTACT US) ─────────────────
+ * Figma export originally used `margin-bottom: -1046px` together with
+ * `height: 1089.5px` + `gap: 999.5px` so a "ghost" outline CONTACT US could
+ * be stacked far above a solid yellow one (clipped by the header's
+ * `align-items: flex-end`). That hack was visually fragile and at certain
+ * viewports the second button overflowed the header (tall yellow strip).
+ *
+ * Replaced with a clean centered flex row: profile, language picker and
+ * ONE solid CONTACT US button (171 × 45 per Figma spec) all vertically
+ * centered inside the 100 px tall header. */
+.languageSelectParent {
+  height: var(--height-100);
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+  text-align: left;
+  font-size: var(--fs-14);
+  /* Use the dark navy brand color (--color-orange-100 = #162E51) so the
+   * ENG/RU label and the profile icon are clearly visible against the
+   * light cream header background. The previous `--color-gainsboro-100`
+   * (#E6DED4) blended into the off-white header and looked invisible. */
+  color: var(--color-orange-100);
+  font-family: var(--font-mazzard);
+  margin-bottom: 0;
+  padding-right: 0;
+}
+/* Subtle, premium separator before the right-side controls to clearly
+ * delineate primary navigation/utility area from account/CTA cluster.
+ * Light, low-contrast — keeps the design clean without adding noise. */
+.languageSelectParent::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 28px;
+  background: rgba(22, 46, 81, 0.18);
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+.languageOptions,
+.languageSelect {
+  display: flex;
+  align-items: center;
+}
+.languageSelect {
+  height: auto;
+  width: auto;
+  flex-direction: row;
+  padding: 0;
+  box-sizing: border-box;
+}
+.languageOptions {
+  gap: var(--gap-3);
+}
+.languageOption {
+  display: flex;
+  align-items: center;
+}
+/* ── Active language label (Figma: 31 × 17 hug, Mazzard H Regular 14) ────── */
+.eng {
+  position: relative;
+  width: 31px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: 'Mazzard H', var(--font-mazzard);
+  font-weight: 600;        /* Promote to SemiBold for better legibility */
+  font-size: 14px;
+  line-height: 17px;        /* matches the 17 px hug height */
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+}
+/* Trigger pill: subtle hover lift so users discover the dropdown affordance */
+.languageSelect {
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background-color .15s ease;
+}
+.languageSelect:hover {
+  background-color: rgba(22, 46, 81, 0.06);
+}
+/* ── Dropdown chevron (Figma: 16 × 16) ────────────────────────────────────── */
+.lsicondownFilled {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  position: relative;
+  display: block;
+}
+.iconamoonprofileLightWrapper {
+  height: 28px;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  transition: background-color .15s ease;
+}
+.iconamoonprofileLightWrapper:hover {
+  background-color: rgba(22, 46, 81, 0.08);
+}
+.iconamoonprofileLight {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: block;
+}
+.actionButtons {
+  min-width: 171px;
+  width: auto;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* The ghost outline duplicate (kept in JSX for backward-compat) is hidden;
+ * only the solid yellow CONTACT US 171 × 45 is rendered. */
+.contactButtons {
+  display: none;
+}

@@ -1,0 +1,533 @@
+/* ============================================================================
+ * FrameComponent24 — "Идеальный сервис" v3 (Editorial Dark / Compact Row)
+ *
+ *  Layout:
+ *    [Eyebrow row + 01—04 range]
+ *    [BIG TITLE  ····················  Intro + Metrics]
+ *    [Card 01] [Card 02] [Card 03] [Card 04]   ← horizontal row
+ *
+ *  Entry animation ("displacement"):
+ *    Each card animates `max-width` from 0 → 100% inside a flex row
+ *    (flex: 1 1 0). As each card grows, sibling cards redistribute width
+ *    and visually "shift" to make room — the result is exactly the
+ *    "появлялись и друг друга смещая" effect the product owner asked for.
+ *    Opacity/translateY trail the width animation by ~200 ms so the
+ *    content fades in only once the card has reserved its slot.
+ * ========================================================================== */
+
+.wrap {
+  position: relative;
+  width: 100%;
+  align-self: stretch;
+  flex-shrink: 0;
+  background:
+    radial-gradient(120% 100% at 90% -10%, #11264A 0%, #091831 55%, #050E1E 100%);
+  color: #FFFFFF;
+  font-family: var(--font-mazzard, "Mazzard", "Mazzard H", system-ui, sans-serif);
+  overflow: hidden;
+  isolation: isolate;
+  padding: 84px clamp(28px, 5vw, 80px) 96px;
+  box-sizing: border-box;
+}
+
+/* ── Atmosphere ─────────────────────────────────────────────────── */
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.beam {
+  position: absolute;
+  top: -30%;
+  right: -25%;
+  width: 80%;
+  height: 160%;
+  background: linear-gradient(
+    115deg,
+    transparent 42%,
+    rgba(254, 174, 0, 0.10) 48%,
+    rgba(254, 174, 0, 0.18) 50%,
+    rgba(254, 174, 0, 0.10) 52%,
+    transparent 58%
+  );
+  transform: rotate(8deg);
+  filter: blur(2px);
+  opacity: 0.85;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+  opacity: 0.35;
+}
+
+.gridLines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 75%);
+  opacity: 0.55;
+}
+
+/* ── Inner ──────────────────────────────────────────────────────── */
+.inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #FEAE00;
+}
+
+.eyebrowDash {
+  width: 36px;
+  height: 2px;
+  background: #FEAE00;
+}
+
+.eyebrowRange {
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.22em;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.headerMain {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: clamp(28px, 4vw, 60px);
+}
+
+.title {
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(38px, 4.4vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  color: #FFFFFF;
+}
+
+.titleLine {
+  display: inline;
+}
+
+.titleLine + .titleLine {
+  margin-left: 0.35em;
+}
+
+.titleAmber {
+  color: #FEAE00;
+}
+
+.titleSmall {
+  display: block;
+  margin-top: 12px;
+  font-size: clamp(13px, 1vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.headerSide {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 6px;
+}
+
+.intro {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(232, 221, 200, 0.78);
+  max-width: 520px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metaVal {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: #FEAE00;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.metaLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.metaDivider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Cards row with "displacement" entry animation ──────────────── */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  width: 100%;
+}
+
+.step {
+  position: relative;
+  flex: 1 1 0;
+  /* Initial collapsed state — width 0 keeps siblings squeezing in. */
+  max-width: 0;
+  min-width: 0;
+  overflow: hidden;
+  transition:
+    max-width 0.85s cubic-bezier(0.22, 0.85, 0.18, 1);
+}
+
+/* Final state once the section enters the viewport. */
+.isVisible .step {
+  max-width: 100%;
+}
+
+/* Staggered cascade: each card starts its width expansion ~180 ms
+   after the previous one, producing the "displacement" feel. */
+.isVisible .stepIdx1 { transition-delay: 0.05s; }
+.isVisible .stepIdx2 { transition-delay: 0.23s; }
+.isVisible .stepIdx3 { transition-delay: 0.41s; }
+.isVisible .stepIdx4 { transition-delay: 0.59s; }
+
+/* The inner panel is what's actually visible. It also fades in. */
+.stepInner {
+  position: relative;
+  height: 100%;
+  padding: 26px 24px 28px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.65s cubic-bezier(0.22, 0.85, 0.18, 1),
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.45s ease;
+}
+
+.isVisible .step .stepInner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Content fade trails the width animation by ~250 ms so it appears
+   only once the slot is reserved — keeps the cascade clean. */
+.isVisible .stepIdx1 .stepInner { transition-delay: 0.30s, 0.30s, 0s, 0s, 0s; }
+.isVisible .stepIdx2 .stepInner { transition-delay: 0.48s, 0.48s, 0s, 0s, 0s; }
+.isVisible .stepIdx3 .stepInner { transition-delay: 0.66s, 0.66s, 0s, 0s, 0s; }
+.isVisible .stepIdx4 .stepInner { transition-delay: 0.84s, 0.84s, 0s, 0s, 0s; }
+
+/* Hover effects (no delay) — keep them snappy. */
+.step .stepInner:hover {
+  background: rgba(254, 174, 0, 0.045);
+  border-color: rgba(254, 174, 0, 0.45);
+  box-shadow:
+    0 18px 60px -28px rgba(254, 174, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  transition-delay: 0s, 0s, 0s, 0s, 0s;
+}
+
+.step .stepInner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(254, 174, 0, 0.10) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.step .stepInner:hover::before { opacity: 1; }
+
+.stepNumeral {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  /* Smaller numeral so it never collides with title/icon. */
+  font-size: clamp(48px, 4vw, 64px);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.4px rgba(254, 174, 0, 0.5);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  font-family: var(--font-mazzard, inherit);
+  transition: -webkit-text-stroke-color 0.35s ease, transform 0.45s ease;
+}
+
+.step .stepInner:hover .stepNumeral {
+  -webkit-text-stroke-color: rgba(254, 174, 0, 0.9);
+  transform: translateY(-2px);
+}
+
+.stepTop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  margin-bottom: 22px;
+  /* Reserve room on the right for the absolute numeral so the tag
+     never sits underneath it on narrow widths. */
+  padding-right: 60px;
+}
+
+.stepTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FEAE00;
+  background: rgba(254, 174, 0, 0.10);
+  border: 1px solid rgba(254, 174, 0, 0.30);
+  padding: 6px 11px 6px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.stepTagText {
+  display: inline-block;
+}
+
+.stepIcon {
+  width: 16px;
+  height: 16px;
+  color: #FEAE00;
+  flex-shrink: 0;
+}
+
+.stepTitle {
+  position: relative;
+  z-index: 1;
+  margin: 4px 0 10px;
+  font-size: clamp(18px, 1.4vw, 22px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  /* Reserve 2 lines so titles align visually across cards. */
+  min-height: 2.3em;
+}
+
+.stepDesc {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 18px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(232, 221, 200, 0.72);
+  flex: 1;
+}
+
+/* Foot rule — clean amber accent flush with content edges.
+   Replaces the previous L-bracket which felt disconnected. */
+.stepFootRule {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 2px;
+  width: 36px;
+  background: linear-gradient(90deg, #FEAE00 0%, rgba(254, 174, 0, 0) 100%);
+  border-radius: 2px;
+  opacity: 0.85;
+  transition: width 0.45s cubic-bezier(0.22, 0.85, 0.18, 1), opacity 0.35s ease;
+  margin-top: auto;
+}
+
+.step .stepInner:hover .stepFootRule {
+  width: 72px;
+  opacity: 1;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 1180px) {
+  .headerMain {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .steps {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .step {
+    flex: 1 1 calc(50% - 8px);
+    min-width: calc(50% - 8px);
+    /* Keep the 0 → 100% animation but cards arrange in 2x2 grid. */
+  }
+  .isVisible .step {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    padding: 64px 22px 76px;
+  }
+  .inner {
+    gap: 36px;
+  }
+  .title {
+    font-size: 36px;
+  }
+  .titleSmall {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .intro {
+    font-size: 14px;
+  }
+  .metaRow {
+    gap: 14px;
+  }
+  .metaVal {
+    font-size: 20px;
+  }
+  .steps {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .step {
+    flex: 1 1 auto;
+    min-width: 100%;
+  }
+  .stepInner {
+    padding: 22px 20px 24px;
+    border-radius: 16px;
+  }
+  .stepNumeral {
+    font-size: 56px;
+    top: 12px;
+    right: 16px;
+    -webkit-text-stroke-width: 1.2px;
+  }
+  .stepTop {
+    margin-bottom: 14px;
+    padding-right: 50px;
+  }
+  .stepIcon {
+    width: 14px;
+    height: 14px;
+  }
+  .stepTitle {
+    font-size: 17px;
+    min-height: 0;
+  }
+  .stepDesc {
+    font-size: 13px;
+  }
+  .stepFootRule {
+    width: 28px;
+  }
+}
+
+/* ── RU letter-spacing nudge ────────────────────────────────────── */
+:global(html[lang="ru"]) .title {
+  letter-spacing: -0.02em;
+}
+:global(html[lang="ru"]) .titleSmall {
+  letter-spacing: 0.14em;
+}
+:global(html[lang="ru"]) .stepTitle {
+  letter-spacing: -0.005em;
+}
+
+/* ── Reduced motion: cut all entry animations to no-op ──────────── */
+@media (prefers-reduced-motion: reduce) {
+  .step,
+  .stepInner,
+  .stepNumeral,
+  .stepFootRule {
+    transition: none;
+  }
+  .step {
+    max-width: 100%;
+  }
+  .stepInner {
+    opacity: 1;
+    transform: none;
+  }
+  .step .stepInner:hover {
+    transform: none;
+  }
+}

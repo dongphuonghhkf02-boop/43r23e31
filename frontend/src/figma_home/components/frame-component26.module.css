@@ -1,0 +1,371 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Frame Component 26 — "Pay Less. Get More." / Advantages (V3)
+   Editorial magazine layout: full-width cream section with oversized
+   typography, rotated watermark, UVP centerpiece + circular seal, and
+   four pull-quote-style advantage blocks.
+   ───────────────────────────────────────────────────────────────────── */
+
+.section {
+  --c-bg: #F5F0E8;
+  --c-navy: #162E51;
+  --c-navy-deep: #0F1F36;
+  --c-text: #17202A;
+  --c-text-muted: rgba(23, 32, 42, 0.66);
+  --c-amber: #FEAE00;
+  --c-stroke: rgba(22, 46, 81, 0.12);
+  --c-card: #FFFFFF;
+
+  position: relative;
+  width: 100%;
+  /* Match the standard section padding used by neighbours (Reviews,
+     Before-After): generous vertical air + 100 px left, 60 px right. */
+  padding: 140px 60px 160px 100px;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  font-family: 'Mazzard H', 'Mazzard', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  isolation: isolate;
+  box-sizing: border-box;
+}
+
+/* DM Auto brandmark \u2014 subtle, top-right of the block. Tinted toward navy
+   so it reads as a watermark on the cream background but still legible. */
+.brandMark {
+  position: absolute;
+  top: 56px;
+  right: 60px;
+  width: clamp(110px, 11vw, 180px);
+  height: auto;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 1;
+  filter: grayscale(1) brightness(0.55) contrast(1.1);
+  user-select: none;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 110px;
+}
+
+/* ── Section header ──────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 1100px;
+}
+
+.advantagesLabel {
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-navy);
+  opacity: 0.75;
+}
+
+.heading {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(48px, 6.4vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: var(--c-navy);
+}
+
+.headingLine1,
+.headingLine2 {
+  display: block;
+}
+.headingLine2 {
+  color: var(--c-text);
+}
+
+/* ── UVP editorial centerpiece ───────────────────────────────────────────── */
+.promise {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 80px;
+  max-width: 1640px;
+}
+
+.promiseFrame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 0 0 0 28px;
+  /* Heavy amber accent rail on the left — editorial pull-quote feel */
+  border-left: 4px solid var(--c-amber);
+  /* Cap the body width so long EN headlines wrap before reaching the seal. */
+  max-width: 880px;
+  min-width: 0;
+}
+
+.promiseLabel {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-amber);
+}
+
+.promiseTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(32px, 3.6vw, 60px);
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+  color: var(--c-navy);
+  text-transform: none;
+  text-wrap: balance;
+}
+
+.promiseTitleLine1,
+.promiseTitleLine2 {
+  display: block;
+}
+
+.promiseTitleLine2 {
+  color: var(--c-text);
+}
+
+.promiseBody {
+  margin: 4px 0 0;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.6;
+  color: var(--c-text-muted);
+  max-width: 720px;
+}
+
+.promiseBadges {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 14px;
+}
+
+.promiseBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  background: var(--c-navy);
+  color: var(--c-bg);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.promiseBadgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-amber);
+  box-shadow: 0 0 0 4px rgba(254, 174, 0, 0.22);
+}
+
+/* ── Circular promise seal (rotating ring) ────────────────────────────── */
+.promiseSeal {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: grid;
+  place-items: center;
+  color: var(--c-navy);
+  flex-shrink: 0;
+}
+
+.sealRing {
+  position: absolute;
+  inset: 0;
+  animation: bibi-seal-spin 22s linear infinite;
+}
+
+.sealRingSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.sealText {
+  fill: var(--c-navy);
+  font-family: 'Mazzard H', 'Mazzard', system-ui, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sealCore {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: var(--c-navy);
+  color: var(--c-amber);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    0 18px 36px -16px rgba(22, 46, 81, 0.45),
+    inset 0 0 0 6px rgba(254, 174, 0, 0.18);
+}
+
+.sealIcon {
+  width: 64px;
+  height: 64px;
+}
+
+@keyframes bibi-seal-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sealRing { animation: none; }
+}
+
+/* ── Pull-quote advantages (4 columns, editorial) ───────────────────── */
+.pullquotes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px 40px;
+  max-width: 1640px;
+}
+
+.pullquote {
+  position: relative;
+  padding: 28px 0 0;
+  border-top: 2px solid var(--c-navy);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pullquote::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 64px;
+  height: 2px;
+  background: var(--c-amber);
+  transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pullquote:hover::before {
+  width: 100%;
+}
+
+.pullquoteHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.pullquoteNo {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  color: var(--c-amber);
+}
+
+.pullquoteSlash {
+  font-weight: 700;
+  font-size: 15px;
+  color: rgba(254, 174, 0, 0.5);
+}
+
+.pullquoteTitle {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(20px, 1.65vw, 26px);
+  line-height: 1.1;
+  color: var(--c-navy);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+.pullquoteBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--c-text-muted);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .section {
+    padding: 100px 40px 110px 64px;
+  }
+  .inner {
+    gap: 80px;
+  }
+  .promise {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 48px;
+  }
+  .promiseSeal {
+    width: 220px;
+    height: 220px;
+  }
+  .pullquotes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 32px;
+  }
+}
+
+@media (max-width: 860px) {
+  .section {
+    padding: 72px 24px 88px 28px;
+  }
+  .inner {
+    gap: 56px;
+  }
+  .heading {
+    font-size: clamp(40px, 10vw, 64px);
+  }
+  .brandMark {
+    top: 22px;
+    right: 22px;
+    width: 96px;
+    opacity: 0.4;
+  }
+  .promise {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .promiseSeal {
+    width: 180px;
+    height: 180px;
+    justify-self: flex-start;
+  }
+  .sealCore {
+    width: 92px;
+    height: 92px;
+  }
+  .sealIcon {
+    width: 46px;
+    height: 46px;
+  }
+  .promiseTitle {
+    font-size: clamp(28px, 6.8vw, 44px);
+  }
+  .pullquotes {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .pullquote {
+    padding-top: 22px;
+  }
+}

@@ -1,0 +1,8 @@
+/*
+ * turnkey-banner1.module.css
+ * ──────────────────────────
+ * The "How we deliver a turnkey car" block has been rewritten in December
+ * 2026 to use Tailwind utility classes inline (see turnkey-banner1.jsx).
+ * This CSS module is intentionally kept empty so any historical import
+ * paths keep resolving without injecting stale styles.
+ */

@@ -1,0 +1,625 @@
+/* ============================================================================
+ * "OUR SERVICES" — V2 (redesigned 2026-06-07)
+ * ----------------------------------------------------------------------------
+ * Brand palette (from figma-global.css — semantic names are inverted in the
+ * legacy export, so we use the literal values here for clarity):
+ *
+ *   navy            #162E51   →  section background / featured-card surface
+ *   navy-strong     #0E2042   →  inner panel / featured-card outline accent
+ *   cream           #F5F0E8   →  card surface / primary text on navy
+ *   cream-soft      #F3EEE7   →  supporting tile surface
+ *   amber           #FEAE00   →  signature accent (icons, ribbon, hover line)
+ *   amber-soft      #F5B800   →  amber 2nd tone (gradient stops)
+ *   ink             #17202A   →  body copy on cream
+ *   ink-soft        rgba(23, 32, 42, 0.72)  →  secondary body copy on cream
+ *
+ * The redesigned section keeps these tokens but introduces a brand-new
+ * layout: one wide featured card on top + a 3×2 grid of supporting tiles
+ * underneath. NO cream-card grid (the legacy 4×2 layout is removed) so the
+ * section reads as visually distinct from any other block on the homepage.
+ * ========================================================================== */
+
+.servicesTitleWrapper {
+  align-self: stretch;
+  padding: 0;
+  flex-shrink: 0;
+  text-align: center;
+  font-family: var(--font-mazzard);
+  color: var(--color-black, #F5F0E8);
+  position: relative;
+}
+
+.servicesTitle {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 120px clamp(24px, 6vw, 110px) 130px;
+  background:
+    radial-gradient(80% 60% at 50% 0%, rgba(254, 174, 0, 0.07) 0%, transparent 60%),
+    radial-gradient(60% 50% at 100% 100%, rgba(254, 174, 0, 0.05) 0%, transparent 70%),
+    #162E51;
+  overflow: hidden;
+}
+
+/* Decorative dot-pattern fill — adds a quiet "engineering blueprint" texture
+   behind the cards without competing with any of them. The mask cuts it off
+   gracefully at the section edges. */
+.servicesTitle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(245, 240, 232, 0.06) 1px, transparent 1.6px);
+  background-size: 26px 26px;
+  background-position: 0 0;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 35%, transparent 90%);
+  z-index: 0;
+}
+
+/* Subtle amber "spotlight" sweep coming in from the upper-right corner — same
+   trick the hero banner uses, so the section visually rhymes with the rest
+   of the homepage even though its layout is brand-new. */
+.servicesTitle::after {
+  content: "";
+  position: absolute;
+  top: -160px;
+  right: -200px;
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle, rgba(254, 174, 0, 0.18) 0%, transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Heading block ──────────────────────────────────────────────────── */
+.headingBlock {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  max-width: 760px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 14px;
+  border: 1px solid rgba(254, 174, 0, 0.55);
+  border-radius: 999px;
+  font-family: var(--font-mazzard);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FEAE00;
+  background: rgba(254, 174, 0, 0.06);
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FEAE00;
+  box-shadow: 0 0 0 4px rgba(254, 174, 0, 0.15);
+}
+
+.ourServices {
+  margin: 0;
+  font-size: clamp(40px, 5.4vw, 72px);
+  line-height: 100%;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #F5F0E8;
+}
+
+.intro {
+  margin: 0;
+  font-size: clamp(15px, 1.1vw, 17px);
+  line-height: 150%;
+  font-weight: 400;
+  color: rgba(245, 240, 232, 0.78);
+  max-width: 620px;
+}
+
+/* ── Featured card (signature service) ──────────────────────────────── */
+.featuredCard {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(245, 240, 232, 0.04) 0%, rgba(245, 240, 232, 0.01) 100%),
+    #0E2042;
+  border: 1px solid rgba(254, 174, 0, 0.22);
+  padding: clamp(32px, 4vw, 56px) clamp(28px, 4vw, 64px);
+  box-sizing: border-box;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 350ms ease;
+}
+
+.featuredCard.isVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.featuredCard:hover {
+  border-color: rgba(254, 174, 0, 0.55);
+}
+
+/* Diagonal amber line accent on the top edge of the featured card. */
+.featuredCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 36%;
+  background: linear-gradient(90deg, #FEAE00 0%, rgba(254, 174, 0, 0) 100%);
+  border-radius: 24px 0 0 0;
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #FEAE00;
+  color: #0E2042;
+  font-family: var(--font-mazzard);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.featuredBadge svg {
+  display: block;
+}
+
+.featuredInner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+  text-align: left;
+}
+
+.featuredContent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+
+.featuredTag {
+  font-family: var(--font-mazzard);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #FEAE00;
+  text-transform: uppercase;
+}
+
+.featuredTitle {
+  margin: 0;
+  font-size: clamp(26px, 2.4vw, 38px);
+  line-height: 110%;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: #F5F0E8;
+  text-transform: none;
+}
+
+.featuredDesc {
+  margin: 0;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 155%;
+  color: rgba(245, 240, 232, 0.75);
+  max-width: 56ch;
+}
+
+.featuredPoints {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+}
+
+.featuredPoint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--font-mazzard);
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 500;
+  color: #F5F0E8;
+}
+
+.featuredPointIcon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: #FEAE00;
+  margin-top: 1px;
+}
+
+/* ── Featured visual (right column) ─────────────────────────────────── */
+.featuredVisual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  height: 100%;
+}
+
+.featuredVisualRing,
+.featuredVisualRing2 {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(245, 240, 232, 0.18);
+  pointer-events: none;
+  animation: ringSpin 32s linear infinite;
+}
+
+.featuredVisualRing {
+  width: 260px;
+  height: 260px;
+}
+
+.featuredVisualRing2 {
+  width: 200px;
+  height: 200px;
+  border-style: solid;
+  border-color: rgba(254, 174, 0, 0.22);
+  animation-duration: 24s;
+  animation-direction: reverse;
+}
+
+.featuredVisualGlow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 174, 0, 0.22) 0%, transparent 70%);
+  filter: blur(6px);
+}
+
+.featuredVisualIconMain {
+  position: relative;
+  color: #FEAE00;
+  z-index: 2;
+  filter: drop-shadow(0 12px 30px rgba(254, 174, 0, 0.35));
+}
+
+.featuredVisualIconMini {
+  position: absolute;
+  top: 22%;
+  right: 16%;
+  color: #F5F0E8;
+  background: #0E2042;
+  border: 1px solid rgba(254, 174, 0, 0.5);
+  border-radius: 999px;
+  padding: 10px;
+  width: 60px;
+  height: 60px;
+  z-index: 3;
+}
+
+@keyframes ringSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── 3×2 supporting services grid ───────────────────────────────────── */
+.servicesGrid {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.serviceTile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 28px 26px 30px;
+  border-radius: 18px;
+  background: #F5F0E8;
+  text-align: left;
+  overflow: hidden;
+  cursor: default;
+  transition:
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 360ms ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.servicesGrid.isVisible .serviceTile {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: var(--enter-delay, 0ms);
+}
+
+/* Amber underline that slides in on hover. */
+.serviceTile::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #FEAE00 0%, #F5B800 100%);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.serviceTile:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 24px 50px -28px rgba(0, 0, 0, 0.45),
+    0 8px 22px -12px rgba(254, 174, 0, 0.18);
+}
+
+.serviceTile:hover::before {
+  transform: scaleX(1);
+}
+
+.serviceTileTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.serviceTileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: rgba(22, 46, 81, 0.06);
+  color: #162E51;
+  flex-shrink: 0;
+  transition:
+    background-color 320ms ease,
+    color 320ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.serviceTile:hover .serviceTileIcon {
+  background: #162E51;
+  color: #FEAE00;
+  transform: rotate(-4deg) scale(1.04);
+}
+
+.serviceTileTag {
+  font-family: var(--font-mazzard);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(22, 46, 81, 0.5);
+  text-transform: uppercase;
+}
+
+.serviceTileTitle {
+  margin: 0;
+  font-size: 20px;
+  line-height: 115%;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: #162E51;
+  text-transform: none;
+  min-height: 46px;
+}
+
+.serviceTileDesc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 150%;
+  font-weight: 400;
+  color: rgba(23, 32, 42, 0.72);
+}
+
+.serviceTileArrow {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(22, 46, 81, 0.35);
+  transform: translateY(4px);
+  opacity: 0;
+  transition:
+    opacity 300ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.serviceTile:hover .serviceTileArrow {
+  opacity: 1;
+  transform: translateY(0);
+  background: #FEAE00;
+  color: #0E2042;
+}
+
+/* ── CTA button container ───────────────────────────────────────────── */
+.contactButtonService {
+  position: relative;
+  z-index: 2;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-top: 8px;
+}
+
+.contactButtonService button {
+  height: 56px !important;
+  width: min(459px, 90%) !important;
+  border-radius: 12px !important;
+  background-color: #F5F0E8 !important;
+  transition: transform 240ms ease, box-shadow 240ms ease !important;
+}
+
+.contactButtonService button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 16px 30px -14px rgba(254, 174, 0, 0.45) !important;
+}
+
+.contactButtonService button > div {
+  font-family: 'Mazzard H', 'Mazzard', system-ui, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em;
+  color: #162E51 !important;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media screen and (max-width: 1100px) {
+  .servicesTitle {
+    gap: 56px;
+    padding: 96px clamp(20px, 4vw, 56px) 110px;
+  }
+  .featuredInner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .featuredVisual {
+    min-height: 240px;
+  }
+  .featuredVisualRing {
+    width: 220px;
+    height: 220px;
+  }
+  .featuredVisualRing2 {
+    width: 168px;
+    height: 168px;
+  }
+  .featuredVisualGlow {
+    width: 190px;
+    height: 190px;
+  }
+  .featuredVisualIconMain {
+    width: 140px;
+    height: 140px;
+  }
+  .servicesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .servicesTitle {
+    gap: 44px;
+    padding: 72px 18px 88px;
+  }
+  .headingBlock {
+    gap: 16px;
+  }
+  .ourServices {
+    font-size: 40px;
+  }
+  .featuredCard {
+    border-radius: 18px;
+    padding: 32px 22px 28px;
+  }
+  .featuredBadge {
+    top: 16px;
+    right: 16px;
+    padding: 6px 10px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  .featuredTitle {
+    font-size: 24px;
+  }
+  .featuredPoints {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
+  .serviceTile {
+    padding: 24px 22px 26px;
+  }
+  .serviceTileTitle {
+    font-size: 18px;
+    min-height: 0;
+  }
+}
+
+/* ── Reduced-motion: keep things static & accessible ───────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .featuredCard,
+  .serviceTile {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .featuredVisualRing,
+  .featuredVisualRing2 {
+    animation: none !important;
+  }
+  .serviceTile:hover {
+    transform: none;
+  }
+  .serviceTile:hover .serviceTileIcon {
+    transform: none;
+  }
+}

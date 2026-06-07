@@ -1,0 +1,435 @@
+/* =============================================================================
+ * DM Auto — "Exact price in a minute" recomposed block (June 2026)
+ *
+ * Visual contract:
+ *   - Slim navy outer ring (24px) instead of the fat 96px Figma frame.
+ *   - Cream inner card with asymmetric two-column grid (55 / 45).
+ *   - Title left-aligned (NOT centred), eyebrow chip above, subtitle below.
+ *   - CALCULATE primary button + FULL CATALOG ghost link sit side-by-side.
+ *   - Trust list (3 bullets with check icons) under the CTA row.
+ *   - Right column: luxury sedan photo with rounded corners, floating amber
+ *     "ALL-IN EUR" price badge in the top-right, decorative corner ticks.
+ *
+ * Brand colours kept verbatim: #162E51 navy, #feae00 amber, #F5F0E8 cream.
+ * ========================================================================== */
+
+.rectangleParent {
+  align-self: stretch;
+  background-color: var(--color-orange-100);      /* navy outer ring */
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: var(--font-mazzard);
+}
+
+.calculate {
+  width: 100%;
+  background-color: var(--color-gray-200, #F5F0E8); /* cream inner card */
+  border-radius: 22px;
+  padding: 56px clamp(40px, 5vw, 80px);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle navy hairline corner accents at the four card corners — adds a
+   "framed by hand" detail without competing with the price badge. */
+.calculate::before,
+.calculate::after {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-color: rgba(22, 46, 81, 0.30);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+.calculate::before {
+  top: 18px;
+  left: 18px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-top-left-radius: 10px;
+}
+.calculate::after {
+  bottom: 18px;
+  right: 18px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  border-bottom-right-radius: 10px;
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────── */
+.calcGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(40px, 5vw, 80px);
+  align-items: center;
+}
+
+/* ── Left column ─────────────────────────────────────────────────────── */
+.calcLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 620px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  padding: 6px 14px;
+  border: 1px solid rgba(22, 46, 81, 0.22);
+  border-radius: 999px;
+  background-color: rgba(255, 253, 252, 0.6);
+  color: var(--color-orange-100);
+  font-family: var(--font-mazzard);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.eyebrowDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #feae00;
+  box-shadow: 0 0 0 3px rgba(254, 174, 0, 0.18);
+}
+
+.calculateACar {
+  margin: 0;
+  font-family: var(--font-mazzard);
+  font-weight: 700;
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  color: var(--color-orange-100);
+  text-align: left;
+}
+.calculateLine1,
+.withAPrice {
+  display: block;
+}
+.calculateLine1 {
+  color: var(--color-orange-100);
+}
+/* Amber inline highlight on line 2 — visual hook that ties the title to
+   the floating amber badge in the image column. */
+.withAPrice {
+  position: relative;
+  color: var(--color-orange-100);
+  font-weight: 700;
+}
+.withAPrice::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.04em;
+  height: 0.18em;
+  background: #feae00;
+  border-radius: 2px;
+  opacity: 0.55;
+  z-index: -1;
+}
+
+.subtitle {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: rgba(23, 32, 42, 0.78);
+  font-family: var(--font-mazzard);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.sourcePill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: var(--color-orange-100);
+  color: #F5F0E8;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* ── Form ───────────────────────────────────────────────────────────── */
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 60px;
+  background: #FFFDFC;
+  border: 1px solid rgba(22, 46, 81, 0.18);
+  border-radius: 12px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.inputWrapper:focus-within {
+  border-color: var(--color-orange-100);
+  box-shadow: 0 0 0 3px rgba(22, 46, 81, 0.10);
+}
+.boxiconssearch {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.searchByVin {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  height: 100%;
+  font-family: 'Mazzard', 'Mazzard H', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  color: #17202A;
+}
+.searchByVin::placeholder { color: rgba(22, 46, 81, 0.45); font-weight: 400; }
+
+/* ── CTA row: primary button + ghost catalog link side-by-side ──────── */
+.ctaRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.calcCta {
+  flex: 1 1 auto;
+  min-width: 220px;
+  height: 60px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 12px;
+  background-color: var(--color-orange-100);
+  color: #F5F0E8;
+  font-family: var(--font-mazzard);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.18s ease, transform 0.05s ease, box-shadow 0.18s ease;
+  box-shadow: 0 8px 24px rgba(22, 46, 81, 0.18);
+}
+.calcCta:hover {
+  background-color: #1c3a66;
+  box-shadow: 0 10px 30px rgba(22, 46, 81, 0.26);
+}
+.calcCta:active { transform: translateY(1px); }
+.calcCta:focus-visible {
+  outline: 2px solid #feae00;
+  outline-offset: 2px;
+}
+
+.allCatalog {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  height: 60px;
+  border-radius: 12px;
+  border: 1px solid rgba(22, 46, 81, 0.20);
+  background-color: transparent;
+  font-family: var(--font-mazzard);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-orange-100);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.05s ease;
+}
+.allCatalog:hover {
+  background-color: rgba(22, 46, 81, 0.06);
+  border-color: rgba(22, 46, 81, 0.4);
+}
+.allCatalog:active { transform: translateY(1px); }
+
+/* ── Trust list ─────────────────────────────────────────────────────── */
+.trustList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+}
+.trustItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mazzard);
+  font-weight: 500;
+  font-size: 13px;
+  color: rgba(22, 46, 81, 0.78);
+  letter-spacing: 0.02em;
+}
+.trustItem svg { color: #feae00; flex-shrink: 0; }
+
+/* ── Right column — car photo + floating badge ──────────────────────── */
+.imageBox {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+.imageInner {
+  width: 100%;
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 5 / 4;
+  background-color: #0e1828;
+  box-shadow:
+    0 16px 40px rgba(22, 46, 81, 0.18),
+    0 2px 0 rgba(22, 46, 81, 0.08);
+}
+.image93Icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 8s ease;
+}
+.imageBox:hover .image93Icon {
+  transform: scale(1.04);
+}
+/* Amber gradient overlay — pins the photo to the brand palette */
+.imageGlow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 60% at 0% 100%, rgba(254, 174, 0, 0.25) 0%, transparent 60%),
+    linear-gradient(180deg, transparent 50%, rgba(22, 46, 81, 0.45) 100%);
+  pointer-events: none;
+}
+
+/* Decorative L-shaped corner ticks (amber) */
+.cornerTick {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: #feae00;
+  border-style: solid;
+  border-width: 0;
+}
+.cornerTickTL { top: 14px; left: 14px;  border-top-width: 2px; border-left-width: 2px; }
+.cornerTickBR { bottom: 14px; right: 14px; border-bottom-width: 2px; border-right-width: 2px; }
+
+/* ── Floating amber "ALL-IN EUR" price badge ─────────────────────────── */
+.priceBadge {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  background-color: #feae00;
+  color: var(--color-orange-100);
+  border-radius: 14px;
+  font-family: var(--font-mazzard);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  min-width: 160px;
+  transform: rotate(-2deg);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.imageBox:hover .priceBadge {
+  transform: rotate(0deg);
+}
+.priceBadgeLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.priceBadgeValue {
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.priceBadgeDots {
+  letter-spacing: 0.06em;
+  opacity: 0.75;
+}
+.priceBadgeHint {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* ── Tablet / mobile ────────────────────────────────────────────────── */
+@media screen and (max-width: 1100px) {
+  .rectangleParent { padding: 18px; }
+  .calculate { padding: 40px 32px; border-radius: 18px; }
+  .calcGrid { gap: 36px; }
+  .calculateACar { font-size: clamp(34px, 5vw, 56px); }
+  .priceBadge { min-width: 140px; padding: 10px 14px; }
+  .priceBadgeValue { font-size: 24px; }
+}
+
+@media screen and (max-width: 800px) {
+  .calcGrid {
+    grid-template-columns: 1fr;
+  }
+  .imageBox {
+    order: -1;
+  }
+  .imageInner { aspect-ratio: 16 / 10; }
+  .calcLeft { max-width: 100%; }
+  .calculate::before,
+  .calculate::after { display: none; }
+  .calculate { padding: 32px 22px; }
+  .calcCta { min-width: 0; flex: 1 1 100%; }
+  .allCatalog { flex: 1 1 100%; justify-content: center; }
+}
+
+@media screen and (max-width: 450px) {
+  .priceBadge { top: 12px; right: 12px; min-width: 120px; padding: 8px 12px; }
+  .priceBadgeValue { font-size: 20px; }
+  .calculateACar { font-size: 30px; }
+  .calculate { padding: 28px 18px; }
+}
+
+/* ── BG/RU adaptive scaling (Russian title is slightly wider) ───────── */
+:global(html[lang="ru"]) .calculateACar {
+  letter-spacing: -0.020em;
+}

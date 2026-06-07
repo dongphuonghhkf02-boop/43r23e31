@@ -1,0 +1,325 @@
+/**
+ * ContactsPage V7 — cream + navy + amber, в стиле Welcome.
+ * Все классы под префиксом .bibi-c2-* чтобы не конфликтовать со старыми стилями.
+ */
+
+.bibi-c2-page {
+  background: #F5F0E8;
+  color: #0F1729;
+  font-family: 'Mazzard', 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.bibi-c2-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+
+/* ── Section heading ──────────────────────────────────────────────── */
+.bibi-c2-head {
+  max-width: 720px;
+  margin: 0 auto 36px;
+  text-align: center;
+}
+.bibi-c2-kicker {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FEAE00;
+  margin-bottom: 14px;
+}
+.bibi-c2-title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.05;
+  color: #0F1729;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+}
+.bibi-c2-subline {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #4A5260;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.bibi-c2-hero {
+  padding: 56px 0 24px;
+}
+.bibi-c2-facts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 960px;
+  margin: 36px auto 0;
+}
+.bibi-c2-fact {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 14px;
+  padding: 18px 22px;
+}
+.bibi-c2-fact__icon {
+  color: #FEAE00;
+  flex-shrink: 0;
+}
+.bibi-c2-fact__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+.bibi-c2-fact__value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0F1729;
+  letter-spacing: -0.01em;
+}
+
+/* ── CHANNELS ─────────────────────────────────────────────────────── */
+.bibi-c2-channels-section {
+  padding: 80px 0 40px;
+}
+.bibi-c2-channels-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.bibi-c2-channel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 18px;
+  padding: 24px 22px 22px;
+  text-decoration: none;
+  color: #0F1729;
+  transition: all 0.22s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+.bibi-c2-channel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.5;
+  transition: opacity 0.22s ease;
+}
+.bibi-c2-channel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(15, 23, 41, 0.12);
+  border-color: currentColor;
+}
+.bibi-c2-channel:hover::before { opacity: 1; }
+
+/* Per-channel accent colour (используется для верхней полоски, иконки и CTA) */
+.bibi-c2-channel--green  { color: #25D366; }
+.bibi-c2-channel--blue   { color: #229ED9; }
+.bibi-c2-channel--navy   { color: #0F1729; }
+.bibi-c2-channel--amber  { color: #FEAE00; }
+
+.bibi-c2-channel__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.bibi-c2-channel__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: #FFFFFF;
+}
+.bibi-c2-channel--green  .bibi-c2-channel__icon { background: #25D366; color: #FFFFFF; }
+.bibi-c2-channel--blue   .bibi-c2-channel__icon { background: #229ED9; color: #FFFFFF; }
+.bibi-c2-channel--navy   .bibi-c2-channel__icon { background: #0F1729; color: #FFFFFF; }
+.bibi-c2-channel--amber  .bibi-c2-channel__icon { background: #FEAE00; color: #0F1729; }
+
+.bibi-c2-channel__ext {
+  color: #C7C0B5;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.bibi-c2-channel:hover .bibi-c2-channel__ext {
+  color: currentColor;
+  transform: translate(2px, -2px);
+}
+
+.bibi-c2-channel__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F1729;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+.bibi-c2-channel__hint {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #6B7280;
+  margin: 0 0 16px;
+  flex: 1 1 auto;
+}
+.bibi-c2-channel__value {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F1729;
+  letter-spacing: 0.01em;
+  padding-top: 12px;
+  border-top: 1px solid #EDE5D8;
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+.bibi-c2-channel__cta {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: currentColor;
+}
+
+/* ── ADVANTAGES ───────────────────────────────────────────────────── */
+.bibi-c2-adv-section {
+  padding: 60px 0 40px;
+}
+.bibi-c2-adv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.bibi-c2-adv {
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 16px;
+  padding: 26px 24px;
+  transition: all 0.2s ease;
+}
+.bibi-c2-adv:hover {
+  border-color: #FEAE00;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(15, 23, 41, 0.08);
+}
+.bibi-c2-adv__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(254, 174, 0, 0.16);
+  color: #FEAE00;
+  margin-bottom: 16px;
+}
+.bibi-c2-adv__title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F1729;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+.bibi-c2-adv__text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4A5260;
+  margin: 0;
+}
+
+/* ── FINAL CTA ────────────────────────────────────────────────────── */
+.bibi-c2-cta {
+  margin: 60px 0 0;
+  background: #0F1729;
+  border-radius: 24px;
+  padding: 56px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.bibi-c2-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(620px 360px at 12% 8%, rgba(254, 174, 0, 0.18) 0%, rgba(0,0,0,0) 55%),
+    radial-gradient(520px 320px at 92% 100%, rgba(254, 174, 0, 0.10) 0%, rgba(0,0,0,0) 60%);
+  pointer-events: none;
+}
+.bibi-c2-cta__inner {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.bibi-c2-cta__kicker {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FEAE00;
+  margin-bottom: 14px;
+}
+.bibi-c2-cta__title {
+  font-size: clamp(28px, 3.4vw, 38px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #FFFFFF;
+  letter-spacing: -0.015em;
+  margin: 0 0 14px;
+}
+.bibi-c2-cta__text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 28px;
+}
+.bibi-c2-cta__btn {
+  appearance: none;
+  border: 0;
+  height: 56px;
+  padding: 0 38px;
+  background: #FEAE00;
+  color: #0F1729;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 12px 32px rgba(254, 174, 0, 0.32);
+}
+.bibi-c2-cta__btn:hover {
+  background: #FFBF2D;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(254, 174, 0, 0.42);
+}
+.bibi-c2-cta__btn:active { transform: translateY(0); }
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .bibi-c2-channels-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .bibi-c2-container { padding: 0 18px 60px; }
+  .bibi-c2-hero { padding: 36px 0 16px; }
+  .bibi-c2-facts { grid-template-columns: 1fr; }
+  .bibi-c2-channels-section, .bibi-c2-adv-section { padding: 48px 0 24px; }
+  .bibi-c2-channels-grid { grid-template-columns: 1fr; gap: 14px; }
+  .bibi-c2-adv-grid { grid-template-columns: 1fr; gap: 14px; }
+  .bibi-c2-cta { padding: 40px 24px; border-radius: 18px; }
+  .bibi-c2-cta__btn { height: 50px; padding: 0 28px; }
+}

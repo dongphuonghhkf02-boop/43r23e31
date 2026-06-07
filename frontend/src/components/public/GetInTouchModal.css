@@ -1,0 +1,355 @@
+/**
+ * GetInTouchModal — DM Auto, V2 (2026-06-07).
+ * Светлая cream-карточка, navy-текст, amber-акценты.
+ * Полный контраст, читается как страница Welcome.
+ */
+
+/* ── Backdrop ─────────────────────────────────────────────────────── */
+.git2-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 41, 0.62);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  animation: git2FadeIn 0.18s ease-out both;
+}
+@keyframes git2FadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes git2SlideIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Card (cream, light, premium) ─────────────────────────────────── */
+.git2-card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  margin: auto;
+  background: #F5F0E8;                    /* cream, как welcome */
+  border: 1px solid #E6DED4;
+  border-radius: 18px;
+  padding: 40px 40px 28px;
+  color: #0F1729;                          /* navy текст */
+  font-family: 'Mazzard', 'Inter', system-ui, sans-serif;
+  box-shadow:
+    0 30px 90px rgba(15, 23, 41, 0.35),
+    0 0 0 1px rgba(254, 174, 0, 0.0);
+  animation: git2SlideIn 0.24s ease-out both;
+}
+
+/* ── Close button ─────────────────────────────────────────────────── */
+.git2-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #E6DED4;
+  background: #FFFFFF;
+  color: #0F1729;
+  border-radius: 10px;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.16s ease;
+}
+.git2-close:hover {
+  border-color: #0F1729;
+  color: #0F1729;
+  transform: scale(1.04);
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+.git2-head {
+  margin-bottom: 26px;
+  text-align: left;
+}
+.git2-kicker {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #FEAE00;
+}
+.git2-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.05;
+  color: #0F1729;
+  letter-spacing: -0.015em;
+}
+.git2-subtitle {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4A5260;
+  max-width: 460px;
+}
+
+/* ── Form layout ──────────────────────────────────────────────────── */
+.git2-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.git2-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.git2-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0F1729;
+}
+.git2-req {
+  color: #FEAE00;
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+/* ── Input fields ─────────────────────────────────────────────────── */
+.git2-input {
+  width: 100%;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  padding: 0 14px;
+  height: 46px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0F1729;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.git2-input::placeholder {
+  color: #9CA3AF;
+  font-weight: 400;
+}
+.git2-input:hover { border-color: #C9BFB1; }
+.git2-input:focus {
+  border-color: #0F1729;
+  box-shadow: 0 0 0 3px rgba(254, 174, 0, 0.18);
+}
+.git2-textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 86px;
+  line-height: 1.5;
+}
+
+/* ── Country tabs (Беларусь / Россия) ─────────────────────────────── */
+.git2-country-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.git2-country-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #4A5260;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.git2-country-tab:hover { border-color: #C9BFB1; color: #0F1729; }
+.git2-country-tab.is-active {
+  background: #0F1729;
+  border-color: #0F1729;
+  color: #FFFFFF;
+  box-shadow: 0 6px 16px rgba(15, 23, 41, 0.22);
+}
+.git2-country-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+.git2-input--phone {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ── Budget row ───────────────────────────────────────────────────── */
+.git2-budget-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.git2-input--budget { flex: 1 1 auto; }
+.git2-currency {
+  display: inline-flex;
+  background: #FFFFFF;
+  border: 1.5px solid #E6DED4;
+  border-radius: 10px;
+  padding: 3px;
+}
+.git2-currency-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #4A5260;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0 14px;
+  height: 38px;
+  min-width: 56px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.git2-currency-btn:hover { color: #0F1729; }
+.git2-currency-btn.is-active {
+  background: #0F1729;
+  color: #FFFFFF;
+}
+
+/* ── Error banner ─────────────────────────────────────────────────── */
+.git2-error {
+  background: #FEF2F2;
+  border: 1.5px solid #FCA5A5;
+  color: #B91C1C;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ── Submit CTA (navy, белый текст) ───────────────────────────────── */
+.git2-submit {
+  margin-top: 6px;
+  appearance: none;
+  border: 0;
+  height: 52px;
+  width: 100%;
+  border-radius: 12px;
+  background: #0F1729;
+  color: #FFFFFF;             /* БЕЛЫЙ текст на navy — читается идеально */
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 8px 24px rgba(15, 23, 41, 0.25);
+}
+.git2-submit:hover:not(:disabled) {
+  background: #1A2740;
+  box-shadow: 0 10px 28px rgba(15, 23, 41, 0.32);
+  transform: translateY(-1px);
+}
+.git2-submit:active:not(:disabled) { transform: translateY(0); }
+.git2-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ── Disclaimer ───────────────────────────────────────────────────── */
+.git2-disclaimer {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 11.5px;
+  color: #6B7280;
+  line-height: 1.5;
+}
+.git2-policy-link {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: #0F1729;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.git2-policy-link:hover { color: #FEAE00; }
+
+/* ── Success state ────────────────────────────────────────────────── */
+.git2-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 16px 8px 4px;
+  gap: 18px;
+}
+.git2-success-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: rgba(254, 174, 0, 0.16);
+  color: #0F1729;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(254, 174, 0, 0.55);
+}
+.git2-success-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #0F1729;
+  letter-spacing: -0.01em;
+}
+.git2-success-text {
+  margin: 0;
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #4A5260;
+}
+.git2-success-btn {
+  appearance: none;
+  background: #0F1729;
+  border: 0;
+  color: #FFFFFF;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  height: 48px;
+  min-width: 200px;
+  padding: 0 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-top: 6px;
+  box-shadow: 0 8px 24px rgba(15, 23, 41, 0.25);
+}
+.git2-success-btn:hover { background: #1A2740; transform: translateY(-1px); }
+
+/* ── Mobile ───────────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .git2-card { padding: 28px 22px 22px; border-radius: 14px; }
+  .git2-title { font-size: 24px; }
+  .git2-budget-row { flex-direction: column; }
+  .git2-currency { align-self: stretch; }
+  .git2-currency-btn { flex: 1 1 50%; }
+}

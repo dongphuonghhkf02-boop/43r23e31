@@ -1,0 +1,221 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Frame Component 27 — Dream-car CTA (V3)
+   Full-bleed cinematic banner. Photo background, navy gradient overlay on
+   the left to keep the copy crisp. No BiBi / DM Auto logo overlay.
+   ───────────────────────────────────────────────────────────────────── */
+
+.section {
+  --c-navy: #0F1F36;
+  --c-navy-2: #162E51;
+  --c-amber: #FEAE00;
+  --c-cream: #F5F0E8;
+  --c-text: #F5F0E8;
+  --c-text-muted: rgba(245, 240, 232, 0.78);
+
+  position: relative;
+  width: 100%;
+  /* Match the same left padding as neighbouring sections (Reviews, etc.). */
+  padding: 140px 60px 140px 100px;
+  background-color: var(--c-navy);
+  background-position: right center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: var(--c-text);
+  font-family: 'Mazzard H', 'Mazzard', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  isolation: isolate;
+  box-sizing: border-box;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px 460px at 12% 50%, rgba(254, 174, 0, 0.18), transparent 60%),
+    linear-gradient(90deg, rgba(11, 24, 48, 0.94) 0%, rgba(11, 24, 48, 0.85) 40%, rgba(11, 24, 48, 0.45) 70%, rgba(11, 24, 48, 0.05) 100%),
+    linear-gradient(180deg, rgba(11, 24, 48, 0.25) 0%, rgba(11, 24, 48, 0.45) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dotted {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(245, 240, 232, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.5;
+  mask-image: linear-gradient(90deg, #000 0%, #000 55%, transparent 90%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 55%, transparent 90%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 720px;
+}
+
+.eyebrow {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-amber);
+}
+
+.heading {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(40px, 5.6vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: var(--c-text);
+}
+
+.headingLine1,
+.headingLine2 {
+  display: block;
+}
+
+.headingLine2 {
+  color: var(--c-amber);
+}
+
+.body {
+  margin: 0;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.6;
+  color: var(--c-text-muted);
+  max-width: 580px;
+}
+
+.features {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 26px;
+}
+
+.feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c-text);
+}
+
+.featureCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(254, 174, 0, 0.18);
+  border: 1px solid rgba(254, 174, 0, 0.6);
+  color: var(--c-amber);
+  flex-shrink: 0;
+}
+
+.featureCheck svg {
+  width: 13px;
+  height: 13px;
+}
+
+.ctaRow {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 26px;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 36px;
+  background: var(--c-amber);
+  color: #0F1F36;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow:
+    0 16px 36px -12px rgba(254, 174, 0, 0.55),
+    0 6px 16px -6px rgba(15, 31, 54, 0.5);
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  min-width: 260px;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  background: #FFBA1F;
+  box-shadow:
+    0 22px 46px -12px rgba(254, 174, 0, 0.65),
+    0 8px 20px -8px rgba(15, 31, 54, 0.55);
+}
+
+.ctaButton:active {
+  transform: translateY(0);
+}
+
+.ctaArrow {
+  width: 18px;
+  height: 18px;
+  transition: transform 200ms ease;
+}
+
+.ctaButton:hover .ctaArrow {
+  transform: translateX(4px);
+}
+
+.secondaryNote {
+  font-size: 13px;
+  color: rgba(245, 240, 232, 0.62);
+  max-width: 240px;
+  line-height: 1.45;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .section {
+    padding: 110px 40px 110px 64px;
+    min-height: 480px;
+  }
+}
+
+@media (max-width: 860px) {
+  .section {
+    padding: 72px 24px 80px 28px;
+    min-height: 440px;
+  }
+  .overlay {
+    background:
+      radial-gradient(700px 460px at 20% 60%, rgba(254, 174, 0, 0.18), transparent 60%),
+      linear-gradient(180deg, rgba(11, 24, 48, 0.88) 0%, rgba(11, 24, 48, 0.78) 60%, rgba(11, 24, 48, 0.68) 100%);
+  }
+  .ctaButton {
+    width: 100%;
+    min-width: unset;
+  }
+  .secondaryNote {
+    max-width: 100%;
+  }
+}

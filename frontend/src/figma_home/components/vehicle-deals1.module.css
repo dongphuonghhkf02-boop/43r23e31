@@ -1,0 +1,150 @@
+/* ──────────────────────────────────────────────────────────────
+   VehicleDeals1 — "Подборка недели" header (Wave 2026-06 redesign).
+   Editorial pattern: amber eyebrow dash + bicolor title + meta row.
+   Lives on the cream-coloured section background.
+   ────────────────────────────────────────────────────────────── */
+
+.vehicleDeals {
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  font-family: var(--font-mazzard, "Mazzard", "Mazzard H", system-ui, sans-serif);
+  padding: 24px 0 8px;
+}
+
+/* ── Eyebrow row (amber dash + uppercase kicker) ─────────────── */
+.eyebrowRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #162E51;
+}
+.eyebrowDash {
+  width: 40px;
+  height: 2px;
+  background: #FEAE00;
+  display: block;
+}
+
+/* ── Title block ─────────────────────────────────────────────── */
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 1100px;
+}
+.titleLine {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(36px, 4.4vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+.titleNavy { color: #162E51; }
+.titleAmber { color: #FEAE00; }
+
+.subline {
+  margin: 14px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #51606D;
+}
+.sublineRule {
+  display: inline-block;
+  width: 56px;
+  height: 1.5px;
+  background: rgba(22, 46, 81, 0.35);
+}
+
+/* ── Meta row ────────────────────────────────────────────────── */
+.metaRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 8px;
+  padding: 14px 22px;
+  background: rgba(22, 46, 81, 0.04);
+  border: 1px solid rgba(22, 46, 81, 0.08);
+  border-radius: 14px;
+  align-self: flex-start;
+  font-family: inherit;
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 80px;
+}
+
+.metaVal {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+  color: #FEAE00;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.metaValSmall {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #162E51;
+  text-transform: uppercase;
+}
+.metaLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #51606D;
+}
+
+.metaDivider {
+  width: 1px;
+  height: 32px;
+  background: rgba(22, 46, 81, 0.16);
+  display: block;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media screen and (max-width: 1100px) {
+  .vehicleDeals { gap: 20px; }
+}
+@media screen and (max-width: 700px) {
+  .vehicleDeals { padding: 12px 0 4px; gap: 16px; }
+  .titleLine { font-size: clamp(28px, 7vw, 42px); }
+  .subline { font-size: 11px; gap: 10px; }
+  .sublineRule { width: 32px; }
+  .metaRow { padding: 12px 14px; gap: 14px; }
+  .metaVal { font-size: 22px; }
+  .metaValSmall { font-size: 12px; }
+  .metaItem { min-width: 0; }
+  .metaDivider { height: 24px; }
+}
+
+/* Russian width parity */
+:global(html[lang="ru"]) .titleLine {
+  font-size: clamp(32px, 3.9vw, 56px);
+  letter-spacing: -0.015em;
+}
+@media screen and (max-width: 700px) {
+  :global(html[lang="ru"]) .titleLine { font-size: clamp(24px, 6.4vw, 36px); }
+}

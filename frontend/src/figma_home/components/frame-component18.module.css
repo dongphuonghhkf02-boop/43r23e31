@@ -1,0 +1,752 @@
+/* ============================================================
+ * HERO — SHOWCASE SEARCH-FIRST (single-column centered)
+ * Full-bleed photographic backdrop with a heavy beige scrim
+ * (so the photo reads as a quiet texture, not a focal point).
+ * All content is CENTERED in one vertical column:
+ *   eyebrow chip → giant headline → KPI bullets → showcase
+ *   filter card → corner ribbon (decorative).
+ * No left/right split. No editorial photo window. The filter
+ * card is the focal element of the page.
+ * ============================================================ */
+
+.heroContentWrapper {
+  align-self: stretch;
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  font-family: var(--font-mazzard);
+  color: var(--bibi-ink, #17202A);
+  flex-shrink: 0;
+  background-color: var(--bibi-beige, #F5F0E8);
+}
+
+.heroContent {
+  position: relative;
+  width: 100%;
+  min-height: min(720px, 92vh);
+  background-color: var(--bibi-beige, #F5F0E8);
+  /* `overflow: visible` so the Brand / Model / Year dropdown panels
+     (which hang below the filter bar) are not clipped at the hero
+     bottom edge. The full-bleed `.heroBackdrop` already has its own
+     overflow:hidden so the backdrop photo still stays inside the
+     hero frame. */
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(56px, 7vw, 112px) clamp(20px, 5vw, 72px) clamp(48px, 6vw, 88px);
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+/* ── Full-bleed backdrop: photo + heavy beige scrim ────────── */
+.heroBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.heroBackdropImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  display: block;
+  /* slow Ken-Burns drift — pure transform/opacity, GPU friendly */
+  animation: heroBackdropDrift 26s ease-in-out infinite alternate;
+  transform-origin: center 60%;
+}
+.heroBackdropScrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(245, 240, 232, 0.96) 0%,
+      rgba(245, 240, 232, 0.84) 38%,
+      rgba(245, 240, 232, 0.72) 62%,
+      rgba(245, 240, 232, 0.96) 100%
+    );
+}
+.heroBackdropVignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 70% at 50% 100%, rgba(22, 46, 81, 0.10) 0%, rgba(22, 46, 81, 0) 60%);
+  mix-blend-mode: multiply;
+}
+@keyframes heroBackdropDrift {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to   { transform: scale(1.10) translate3d(-1.5%, -1%, 0); }
+}
+
+/* ── Oversized "DM Auto" watermark behind everything ───────── */
+.heroWatermark {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mazzard);
+  font-weight: 900;
+  font-size: clamp(10rem, 22vw, 26rem);
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  color: var(--bibi-blue, #162E51);
+  opacity: 0.045;
+  user-select: none;
+  pointer-events: none;
+  z-index: 1;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.05em;
+}
+.heroWatermarkAccent {
+  color: var(--bibi-yellow, #FEAE00);
+  opacity: 1;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  font-size: 0.78em;
+  margin-left: 0.06em;
+  /* mix with watermark opacity (~0.045) — looks like a hand-drawn signature
+     swash next to the bold "DM" wordmark */
+}
+
+/* Legacy classes — neutralized */
+.image60Parent { all: unset; display: contents; }
+.image60Icon   { all: unset; display: contents; }
+.leftMirrorClip,
+.image60Mirror,
+.image61Icon,
+.heroGrid,
+.heroTextStack,
+.heroInner,
+.navyRule,
+.navyRuleNotch,
+.photoWindow,
+.photoWindowFrame,
+.cornerStamp,
+.cornerStampDot {
+  display: none !important;
+}
+
+/* ── Centered foreground stack ─────────────────────────────── */
+.heroForeground {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+
+/* Eyebrow chip — navy outline pill + gold dot */
+.eyebrowChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border: 1px solid var(--bibi-blue, #162E51);
+  border-radius: 999px;
+  background-color: rgba(255, 253, 252, 0.7);
+  color: var(--bibi-blue, #162E51);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: inherit;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.eyebrowDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--bibi-yellow, #FEAE00);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(254, 174, 0, 0.18);
+}
+
+/* ── Display headline — centered, single column ────────────── */
+.heroHeadline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+.fromAuction,
+.toKeys,
+.inYourHands {
+  margin: 0;
+  display: block;
+  font-size: clamp(2.5rem, 7vw, 7rem);
+  font-weight: 700;
+  line-height: 0.95;
+  text-transform: uppercase;
+  font-family: inherit;
+  letter-spacing: -0.025em;
+  color: var(--bibi-blue, #162E51);
+}
+/* Middle line — slightly different tone for rhythm */
+.toKeys {
+  color: var(--bibi-ink, #17202A);
+}
+/* Last line — solid navy with a subtle gold underline accent */
+.inYourHands {
+  color: var(--bibi-blue, #162E51);
+  position: relative;
+  display: inline-block;
+  align-self: center;
+}
+.inYourHands::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -0.18em;
+  height: 0.08em;
+  background-color: var(--bibi-yellow, #FEAE00);
+  border-radius: 999px;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: underlineIn 720ms cubic-bezier(0.22, 1, 0.36, 1) 1100ms forwards;
+}
+@keyframes underlineIn {
+  to { transform: scaleX(1); }
+}
+
+/* ── KPI strap-lines — centered bullet row ─────────────────── */
+.clientStats {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 3vw, 48px);
+  flex-wrap: wrap;
+}
+.statItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--bibi-ink-2, #51606D);
+  font-weight: 500;
+  font-family: inherit;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+.statBullet {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--bibi-yellow, #FEAE00);
+  flex-shrink: 0;
+}
+.statItem .lineInner { display: inline-block; }
+
+/* ── Showcase filter card — focal element ──────────────────── */
+.filterControlsWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(12px, 2vw, 28px);
+}
+.filterControls {
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  align-items: stretch;
+  background-color: var(--bibi-beige-3, #FFFDFC);
+  border: 1px solid var(--bibi-line, #D8D0C6);
+  border-radius: 16px;
+  padding: 0;
+  height: 76px;
+  overflow: visible;
+  position: relative;
+  box-shadow:
+    0 1px 0 var(--bibi-line-soft, #E6DED4),
+    0 20px 60px rgba(23, 32, 42, 0.12);
+}
+.filterCellWrap {
+  flex: 1 1 0;
+  position: relative;
+  height: 100%;
+  display: flex;
+}
+/* When this cell's dropdown is open, lift the whole wrap above its
+   siblings so the absolutely-positioned panel below it can't be
+   covered by adjacent filter cells (Brand was hiding behind Model). */
+.filterCellWrap:has(.dropdownPanel),
+.filterCellWrap:has(.filterCellOpen) {
+  z-index: 50;
+}
+.filterCell {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  transition: background-color 160ms ease;
+  border-radius: 14px;
+}
+.filterCell:hover {
+  background-color: rgba(22, 46, 81, 0.05);
+}
+.filterCellOpen {
+  background-color: rgba(22, 46, 81, 0.09);
+}
+.filterCell:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px rgba(0, 80, 216, 0.32);
+}
+
+.filterLabel {
+  color: var(--bibi-ink, #17202A);
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filterCaret {
+  width: 18px;
+  height: 18px;
+  filter: none;
+  opacity: 0.65;
+  transition: transform 200ms ease;
+}
+.filterCaretOpen {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* === Dropdown panel — light surface, restrained shadow === */
+.dropdownPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background-color: var(--bibi-beige-3, #FFFDFC);
+  border: 1px solid var(--bibi-line, #D8D0C6);
+  border-radius: 14px;
+  padding: 0;
+  z-index: 9999;
+  max-height: 380px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 14px 36px rgba(23, 32, 42, 0.14), 0 1px 0 var(--bibi-line-soft, #E6DED4);
+  animation: dropdownIn 0.18s ease-out;
+  isolation: isolate;
+}
+.dropdownSearchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--bibi-line-soft, #E6DED4);
+  background-color: var(--bibi-beige-3, #FFFDFC);
+  flex-shrink: 0;
+}
+.dropdownSearchIcon {
+  width: 16px;
+  height: 16px;
+  filter: none;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+.dropdownSearchInput {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--bibi-ink, #17202A);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+}
+.dropdownSearchInput::placeholder {
+  color: var(--bibi-ink-3, #6E7C88);
+}
+.dropdownList {
+  overflow-y: auto;
+  padding: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--bibi-line, #D8D0C6) transparent;
+  flex: 1;
+}
+.dropdownList::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdownList::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdownList::-webkit-scrollbar-thumb {
+  background: var(--bibi-line, #D8D0C6);
+  border-radius: 3px;
+}
+.dropdownEmpty {
+  padding: 14px 18px;
+  color: var(--bibi-ink-3, #6E7C88);
+  font-size: 14px;
+  text-align: center;
+  font-family: inherit;
+}
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dropdownItem {
+  display: block;
+  width: 100%;
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  color: var(--bibi-ink, #17202A);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.12s, color 0.12s;
+}
+.dropdownItem:hover {
+  background-color: rgba(22, 46, 81, 0.08);
+  color: var(--bibi-blue, #162E51);
+  font-weight: 500;
+}
+.dropdownItemActive {
+  background-color: rgba(254, 174, 0, 0.18);
+  color: var(--bibi-blue, #162E51);
+  font-weight: 500;
+}
+/* Items for brands/models/years that have ZERO cars in the catalog right
+   now. We still let the user click them (they'll land on an empty catalog
+   page with their filter applied — UX consistent with the catalog itself)
+   but render them dimmed so they know in advance. */
+.dropdownItemUnavailable {
+  color: rgba(255, 255, 255, 0.36);
+}
+.dropdownItemUnavailable:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
+}
+.dropdownItemCount {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.filterDivider {
+  width: 1px;
+  height: 36px;
+  background-color: var(--bibi-line, #D8D0C6);
+  flex-shrink: 0;
+  opacity: 1;
+}
+/* Bold 700 — CTA button: gold fill, navy text */
+.findBtn {
+  flex: 0 0 auto;
+  height: 100%;
+  padding: 0 32px;
+  background-color: var(--bibi-yellow, #FEAE00);
+  color: var(--bibi-blue, #162E51);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 0;
+  border-top-right-radius: 13px;
+  border-bottom-right-radius: 13px;
+  cursor: pointer;
+  text-transform: uppercase;
+  min-width: 200px;
+  transition: background-color 160ms ease, transform 120ms ease;
+}
+.findBtn:hover { background-color: var(--bibi-yellow-hover, #FFBF2D); }
+.findBtn:active { transform: translateY(1px); }
+.findBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 80, 216, 0.22);
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media screen and (max-width: 1100px) {
+  .fromAuction, .toKeys, .inYourHands { font-size: clamp(2rem, 6vw, 4.5rem); }
+  .heroWatermark { font-size: clamp(8rem, 22vw, 18rem); }
+}
+@media screen and (max-width: 900px) {
+  .heroContent {
+    min-height: 0;
+    padding: clamp(32px, 7vw, 64px) 20px clamp(36px, 7vw, 56px);
+  }
+  .heroForeground { gap: clamp(16px, 3vw, 24px); max-width: 100%; }
+  .fromAuction, .toKeys, .inYourHands { font-size: clamp(1.85rem, 8vw, 2.75rem); line-height: 1.02; }
+  .eyebrowChip { font-size: 11px; padding: 7px 13px; }
+  .clientStats { flex-wrap: wrap; gap: 12px 22px; }
+  .statItem { font-size: 0.875rem; }
+  .filterControls { flex-wrap: wrap; height: auto; padding: 8px; gap: 4px; border-radius: 14px; }
+  .filterCellWrap { flex: 1 1 100%; min-width: 0; }
+  .filterCell { padding: 12px 16px; height: 48px; border-radius: 10px; }
+  .filterDivider { display: none; }
+  .findBtn {
+    width: 100%;
+    padding: 14px;
+    height: 50px;
+    border-radius: 10px;
+    margin-top: 4px;
+  }
+  .dropdownPanel { left: 0; right: 0; }
+  .heroWatermark { font-size: clamp(6rem, 28vw, 12rem); opacity: 0.035; }
+}
+@media screen and (max-width: 450px) {
+  .heroContent { padding: 28px 14px 32px; }
+  .fromAuction, .toKeys, .inYourHands { font-size: 1.75rem; line-height: 1.08; }
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .heroBackdropImg,
+  .inYourHands::after {
+    animation: none !important;
+  }
+}
+
+
+/* ============================================================
+   HERO REVEAL ANIMATIONS — "per-character diagonal slide-up"
+   ------------------------------------------------------------
+   Inspired by studionamma.com (Playground / Selected Projects).
+   Each letter has its own small mask. The inner span is a
+   BLOCK-LEVEL element inside the inline-block mask, so its
+   `translateY(100%)` is exactly the mask's height — guaranteed
+   to start fully hidden BELOW the mask's bottom edge, then
+   rise UP into view.
+   Per-character animation-delay grows left-to-right, producing
+   the signature diagonal "wave" reveal.
+   GPU-only properties (transform + opacity) for 60fps.
+   Respects prefers-reduced-motion.
+   IMPORTANT: line-heights are kept identical to the original
+   typographic design (no extra vertical padding) so the
+   animation NEVER affects final spacing/composition.
+   ============================================================ */
+
+/* --- Per-character mask + slider for the headline ---
+   The headline is ALL UPPERCASE (no descenders) so we keep
+   line-height: 1 — identical to the original CSS for these
+   classes. No padding hacks. */
+.charMask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.charInner {
+  display: block;
+  line-height: 1;
+  transform: translate3d(0, 100%, 0); /* start fully BELOW the mask */
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: heroCharSlideUp;
+  animation-duration: 900ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); /* ease-out-quint */
+  animation-fill-mode: both;
+}
+
+@keyframes heroCharSlideUp {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* --- Headline line boxes: keep ORIGINAL design line-height,
+   no extra spacing introduced by the animation. --- */
+.heroHeadline .fromAuction,
+.heroHeadline .toKeys,
+.heroHeadline .inYourHands {
+  display: block;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  /* line-height comes from the existing rule above (100%) */
+}
+
+/* --- Eyebrow ("AMERICA | KOREA") — also UPPERCASE, no descenders.
+   Keep its original line-height (100%) so it doesn't grow. --- */
+.heroTextStack .americaKorea {
+  display: block;
+  overflow: hidden;
+}
+.heroTextStack .americaKorea .lineInner {
+  display: block;
+  line-height: inherit;
+  transform: translate3d(0, 100%, 0);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: heroLineSlideUp 760ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+}
+
+/* --- KPI rows: mixed case ("Over", "Real-time", "happy") so
+   descenders ('p', 'y') exist. Use a tiny padding hack to
+   give them room while keeping outward spacing intact. --- */
+.clientStats .statItem {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* descender breathing room */
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
+  line-height: 1;
+}
+.clientStats .statItem .lineInner {
+  display: block;
+  line-height: 1;
+  transform: translate3d(0, 100%, 0);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: heroLineSlideUp;
+  animation-duration: 720ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+.clientStats .statItem:nth-child(1) .lineInner { animation-delay: 1300ms; }
+.clientStats .statItem:nth-child(2) .lineInner { animation-delay: 1400ms; }
+.clientStats .statItem:nth-child(3) .lineInner { animation-delay: 1500ms; }
+
+@keyframes heroLineSlideUp {
+  0% {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* --- Filter bar fade-up --- */
+.filterControlsWrapper {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  animation: heroBarFadeUp 820ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms both;
+  will-change: opacity, transform;
+}
+@keyframes heroBarFadeUp {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Accessibility — disable motion entirely */
+@media (prefers-reduced-motion: reduce) {
+  .charMask,
+  .heroTextStack .americaKorea,
+  .clientStats .statItem {
+    overflow: visible;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    line-height: inherit;
+  }
+  .charInner,
+  .lineInner,
+  .filterControlsWrapper {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ────────── Russian (RU) adaptive overrides ──────────
+   Russian translations are slightly longer than the English originals
+   (e.g. "FIND A CAR" → "НАЙДЕН АВТОМОБИЛЬ", "Any year" → "Любой год").
+   To preserve the SAME visual proportions of the English layout,
+   we shrink font-size + letter-spacing on the RU variant only.
+*/
+:global(html[lang="ru"]) .findBtn {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 0 22px;
+  white-space: nowrap;
+  min-width: 188px;
+}
+:global(html[lang="ru"]) .filterLabel {
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:global(html[lang="ru"]) .filterCell {
+  padding: 0 18px;
+}
+@media screen and (max-width: 1350px) {
+  :global(html[lang="ru"]) .findBtn { font-size: 11px; padding: 0 18px; min-width: 0; }
+  :global(html[lang="ru"]) .filterLabel { font-size: 13px; }
+  :global(html[lang="ru"]) .filterCell { padding: 0 14px; }
+}
+
+/* RU headline — slightly tighter tracking to keep line widths balanced. */
+:global(html[lang="ru"]) .fromAuction,
+:global(html[lang="ru"]) .toKeys,
+:global(html[lang="ru"]) .inYourHands {
+  font-size: clamp(2rem, 4.4vw, 5.25rem);
+  letter-spacing: -0.015em;
+}
+@media screen and (max-width: 1100px) {
+  :global(html[lang="ru"]) .fromAuction,
+  :global(html[lang="ru"]) .toKeys,
+  :global(html[lang="ru"]) .inYourHands {
+    font-size: clamp(1.85rem, 4.8vw, 4rem);
+  }
+}
+@media screen and (max-width: 900px) {
+  :global(html[lang="ru"]) .fromAuction,
+  :global(html[lang="ru"]) .toKeys,
+  :global(html[lang="ru"]) .inYourHands {
+    font-size: clamp(1.7rem, 7.4vw, 2.6rem);
+    line-height: 1.06;
+  }
+}

@@ -1,0 +1,83 @@
+/* ──────────────────────────────────────────────────────────────
+   FrameComponent20 — filter row beneath the new VehicleDeals1 header.
+   Compact, single-row at 1920, wraps gracefully below 925.
+   ────────────────────────────────────────────────────────────── */
+
+.frameWrapper {
+  align-self: stretch;
+  font-family: var(--font-mazzard, "Mazzard", system-ui, sans-serif);
+  color: #17202A;
+  padding-top: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.filterEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #162E51;
+}
+.eyebrowDash {
+  width: 28px;
+  height: 2px;
+  background: #FEAE00;
+  display: block;
+}
+
+/* Budget pills group */
+.tiers {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(22, 46, 81, 0.04);
+  border: 1px solid rgba(22, 46, 81, 0.1);
+  border-radius: 999px;
+}
+
+.tierBtn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #17202A;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 999px;
+  min-width: 92px;
+  height: 42px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+.tierBtn:hover {
+  background: rgba(254, 174, 0, 0.14);
+}
+.tierBtnActive {
+  background: #162E51;
+  color: #FEAE00;
+  box-shadow: 0 2px 8px -2px rgba(22, 46, 81, 0.35);
+}
+.tierBtnActive:hover {
+  background: #1d3c6b;
+}
+
+/* Responsive */
+@media screen and (max-width: 925px) {
+  .row { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .tiers { width: 100%; overflow-x: auto; }
+  .tierBtn { min-width: 80px; padding: 0 14px; font-size: 12px; }
+}

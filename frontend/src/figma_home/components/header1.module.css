@@ -1,0 +1,304 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * DM Auto top header — TWO-TIER layout (June 2026 polished redesign).
+ *
+ *   Tier 1 — Utility row (dark navy, ~38 px tall)
+ *     · Left:  📞 phone1 · 📞 phone2 · 🕒 working hours
+ *     · Right: 🟢 LIVE pulse · ✉ email · social icons (TG / WA / IG)
+ *
+ *   Tier 2 — Main row (cream, 76 px tall)
+ *     · Left:   logo
+ *     · Center: primary nav (CATALOG · CALCULATOR · ABOUT · CONTACTS)
+ *     · Right:  VIN search • ENG ▾ language • 👤 profile • [CONTACT US]
+ *
+ * Goals:
+ *   • Auth + language live on the main bar (with primary cluster) so
+ *     they feel like first-class actions, not buried in the strip.
+ *   • Utility strip stays informational only — phones, hours, social.
+ *   • Premium feel: subtle dividers, pulse, hover micro-interactions.
+ *   • Brand colours: #162E51 navy · #feae00 amber · #F5F0E8 cream.
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.header {
+  width: var(--width-1920);
+  background-color: var(--color-gray-200);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  box-sizing: border-box;
+  z-index: 5;
+  text-align: left;
+  font-size: var(--fs-16);
+  color: var(--color-orange-100);
+  font-family: var(--font-mazzard);
+}
+
+/* ── TIER 1 ── Utility row ─────────────────────────────────────────── */
+.utilityRow {
+  height: 38px;
+  background: linear-gradient(180deg, #162E51 0%, #142a4a 100%);
+  color: #F5F0E8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  font-family: 'Mazzard H', var(--font-mazzard, system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  box-sizing: border-box;
+  position: relative;
+  border-bottom: 1px solid rgba(254, 174, 0, 0.18);   /* subtle amber hairline */
+}
+.utilityRow::after {
+  /* Soft amber glow underline — premium accent that hints brand colour */
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #feae00 50%, transparent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.utilityLeft,
+.utilityRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.utilityRight {
+  gap: 14px;
+}
+
+.utilityPhone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: color .15s ease, transform .15s ease;
+}
+.utilityPhone:hover { color: #feae00; transform: translateY(-1px); }
+.utilityPhone svg { color: #feae00; flex-shrink: 0; }
+
+.utilityDivider {
+  width: 1px;
+  height: 14px;
+  background: rgba(245, 240, 232, 0.20);
+  flex-shrink: 0;
+}
+.utilityHours {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.88;
+}
+.utilityHours svg { color: rgba(245, 240, 232, 0.7); flex-shrink: 0; }
+
+/* — Email link — */
+.utilityEmail {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.92;
+  transition: color .15s ease, opacity .15s ease;
+}
+.utilityEmail:hover { color: #feae00; opacity: 1; }
+.utilityEmail svg { color: rgba(245, 240, 232, 0.78); flex-shrink: 0; }
+.utilityEmail:hover svg { color: #feae00; }
+
+/* — Social icons — */
+.utilitySocials {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.socialLink {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: rgba(245, 240, 232, 0.82);
+  background: rgba(245, 240, 232, 0.06);
+  border: 1px solid rgba(245, 240, 232, 0.10);
+  transition: color .15s ease, background-color .15s ease, border-color .15s ease, transform .15s ease;
+  text-decoration: none;
+}
+.socialLink:hover {
+  color: #162E51;
+  background: #feae00;
+  border-color: #feae00;
+  transform: translateY(-1px);
+}
+
+/* ── TIER 2 ── Main row ────────────────────────────────────────────── */
+.mainRow {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  gap: 32px;
+  background-color: var(--color-gray-200);            /* off-white #FFFDFC */
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(22, 46, 81, 0.08);
+  box-shadow: 0 1px 0 rgba(22, 46, 81, 0.03);
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.bibiLogo021Icon {
+  height: 45.8px;
+  width: auto;
+  position: relative;
+  display: block;
+}
+
+/* Primary navigation — center-grown via `margin-right: auto` so the
+ * right cluster (search + lang + profile + CTA) hugs the right edge. */
+.mainNav {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-mazzard);
+  font-size: var(--fs-16);
+  color: var(--color-orange-100);
+}
+
+/* Push the search + auth + CTA cluster to the right edge */
+.mainRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── VIN Search ──── (compact, refined) */
+.searchInput,
+.searchInputChild {
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.searchInput {
+  height: 44px;
+  width: 300px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px 0 12px;
+  position: relative;
+  isolation: isolate;
+  background: #F5F0E8;
+  z-index: 2;
+  transition: box-shadow .2s ease;
+}
+.searchInputChild {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  margin: 0 !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 1px solid rgba(22, 46, 81, 0.12);
+  background: transparent;
+  z-index: 0;
+  flex-shrink: 0;
+  border-radius: 10px;
+  transition: border-color .2s ease;
+}
+.boxiconssearchParent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
+}
+.boxiconssearch {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity .15s ease;
+}
+.searchInput:focus-within .boxiconssearch { opacity: 1; }
+.searchByVin {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  font-family: 'Mazzard H', var(--font-mazzard, system-ui, sans-serif);
+  font-weight: 500;
+  font-size: 14px;
+  background-color: transparent;
+  position: relative;
+  color: #17202A;
+  text-align: left;
+  display: inline-block;
+  padding: 0;
+}
+.searchByVin::placeholder { color: rgba(22, 46, 81, 0.55); }
+.searchByVin:focus { outline: 0; }
+.searchInput:focus-within .searchInputChild {
+  border-color: var(--color-orange-100);
+  box-shadow: 0 0 0 3px rgba(22, 46, 81, 0.08);
+}
+
+/* ── Legacy aliases — kept for back-compat with components that still
+ *    reference them (e.g. FrameComponent17 variant="cta"). */
+.bibiLogo021Parent {
+  display: none;                                  /* replaced by .logoLink/.mainNav */
+}
+.frameWrapper,
+.contactsParent {
+  display: contents;
+}
+.headerInner {
+  display: contents;
+}
+.searchInputParent {
+  display: contents;
+}
+.searchInputItem { display: none; }
+.placeholder { display: none; }                    /* phones moved to utility row */
+
+/* ── Inside the main row: tune FrameComponent17 instances to feel
+ *    like a single seamless cluster with the VIN search and CTA. */
+.mainRow :global([data-variant="utility"]) {
+  height: 44px;
+  gap: 6px;
+}
+/* The utility-variant FrameComponent17 already renders a 28px vertical
+ * divider via its ::before, which now visually separates VIN search
+ * from the language/profile cluster — exactly what we want. Keep it. */
+
+/* For the CTA variant, the same ::before separator would create a
+ * second divider right before CONTACT US. Inside the main row that
+ * gets too busy, so suppress it specifically for the CTA variant. */
+.mainRow :global([data-variant="cta"])::before {
+  display: none !important;
+}
+.mainRow :global([data-variant="cta"]) {
+  height: 44px;
+  margin-left: 4px;
+}
+
+/* ── Responsive — desktop only. The whole header sits inside
+ *    <ScaledChrome> which already handles the proportional scaling
+ *    down to ≈ 769 px viewports; below that the mobile header takes over. */
